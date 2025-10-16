@@ -50,6 +50,7 @@
                 <th style="">ID</th>
                 <th style="">类型</th>
                 <th style="">备注</th>
+                <th style="">显示</th>
                 <th style="">创建时间</th>
 
                 <th>操作</th>
@@ -61,9 +62,24 @@
                     <td>{$vo.id|default=''}</td>  <!--ID-->
                     <td>{$vo.type_name|default=''}</td>  <!--类型-->
                     <td>{$vo.name|default=''}</td>  <!--备注-->
+                    <td>
+                        <!--展示-->
+                        <!--开关 class加上 layui-form  -->
+                        <div class="layui-form">
+                            <input type="checkbox" lay-skin="switch" lay-text="显示|隐藏" lay-filter="is_show"
+                                   name="is_show"
+                                   value="{$vo.id}"
+                            <if condition="$vo.is_show == 1">checked</if>
+                            >
+                        </div>
+
+
+                    </td>
+
                     <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) :
                         ''}
                     </td>  <!--创建时间-->
+
                     <td>
                         <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_field/edit')">
                             <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
@@ -96,15 +112,22 @@
 </html>
 
 
-<!--修改状态|导出|搜索  js代码-->
 <script>
-
-    //开关板块
     layui.use(['layer', 'form', 'slider'], function () {
         var layer = layui.layer, form = layui.form;
 
 
+        form.on('switch(is_show)', function (data) {
+            batchPost(data.value, 'is_show', this.checked ? 1 : 2)
+        });
+
+
     });
+</script>
+<!--修改状态|导出|搜索  js代码-->
+<script>
+
+
 
     //修改状态
     function batchPost(id, field, value) {

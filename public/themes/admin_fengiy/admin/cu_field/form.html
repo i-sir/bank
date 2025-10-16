@@ -95,7 +95,7 @@
             <!-- 新增空白字段按钮 -->
             <div class="add-item-container">
                 <button class="layui-btn layui-btn-primary layui-btn-sm" id="button_data_value00001" type="button">
-                    <i class="layui-icon">&#xe654; </i> 添加题目
+                    <i class="layui-icon">&#xe654; </i> 添加字段
                 </button>
             </div>
         </div>
@@ -431,7 +431,6 @@
             var $newField = $(newFieldHtml);
             // 将新题目添加到添加按钮的前面，实现向下添加的效果
             $(this).closest('.add-item-container').before($newField);
-            form.render('select');
 
             setTimeout(function () {
                 $newField.css('opacity', '1');
@@ -439,7 +438,15 @@
             }, 10);
 
             $newField.find('input').focus();
+
+
+            //初始化一下
+            form.render();
         });
+
+
+        //初始化一下
+        form.render();
     });
 </script>
 
