@@ -29,97 +29,10 @@
     </div>
 </div>
 
-
-<style>
-    .layui-btn .layui-icon {
-        vertical-align: middle !important;
-    }
-
-    /* 优化输入框和开关的容器样式 */
-    #data_value00001 {
-        padding: 10px 0;
-    }
-
-    #data_value00001 > div {
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-
-    .layui-inline {
-        vertical-align: middle;
-    }
-
-    .form-control.post-params:focus {
-        border-color: #1E9FFF;
-        box-shadow: 0 0 0 2px rgba(30, 159, 255, 0.2);
-        outline: none;
-    }
-
-    /* 优化开关样式和对齐 */
-    .switch-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        white-space: nowrap;
-    }
-
-    .switch-text {
-        color: #666;
-        font-size: 14px;
-    }
-
-    /* 关键调整：选项列表与类型选择器水平对齐 */
-    .options-list {
-        display: none;
-        margin-top: 10px;
-        padding-left: 120px; /* 与上方类型选择器左侧对齐，可根据实际需求微调 */
-        width: 100%;
-    }
-
-    /* 优化选项内部元素对齐 */
-    .option-item {
-        display: flex;
-        align-items: center;
-        margin-top: 5px;
-        gap: 5px;
-    }
-
-    .option-item .form-control {
-        flex: 1; /* 输入框占满剩余宽度，保证排列整齐 */
-        min-width: 200px;
-    }
-
-    /* 优化按钮样式 */
-    .layui-btn-sm {
-        padding: 0 15px;
-        height: 38px;
-        line-height: 38px;
-    }
-
-    .removeclass {
-        transition: all 0.2s;
-    }
-
-    .removeclass:hover {
-        background-color: #f53f3f !important;
-    }
-
-    #button_data_value00001 {
-        transition: all 0.2s;
-    }
-
-    #button_data_value00001:hover {
-        background-color: #ff9900 !important;
-    }
-</style>
-
 <div class="form-group">
     <div class="layui-form-item">
         <label class="col-sm-2 control-label">基础信息:</label>
-        <div class="col-md-6 col-sm-10" id="data_value00001" style="">
+        <div class="col-md-6 col-sm-10" id="data_value00001">
             <!-- 已有数据的字段 -->
             <if condition="!empty($value)">
                 <foreach item="data_val" key="data_index" name="value">
@@ -202,6 +115,168 @@
     </div>
 </div>
 
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+
+    /* 主容器样式 */
+    #data_value00001 {
+        padding: 20px;
+        background-color: #f9fafb;
+        border-radius: 8px;
+    }
+
+    /* 字段容器样式 */
+    .item-container {
+        margin-bottom: 16px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+
+    .item-container:hover {
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 优化输入框和选择器样式 */
+    .form-control.post-params {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: all 0.2s;
+        min-width: 200px;
+    }
+
+    .form-control.post-params:focus {
+        border-color: #4096ff;
+        box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.2);
+        outline: none;
+    }
+
+    select.form-control.post-params {
+        padding: 7px 12px;
+        min-width: 120px;
+    }
+
+    /* 优化开关和文本对齐 */
+    .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .switch-text {
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* 选项列表样式 - 增加缩进明确层级 */
+    .options-list {
+        display: none;
+        margin-top: 12px;
+        padding-left: 140px; /* 增加缩进，明确是子元素 */
+        width: 100%;
+        animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 选项项样式 */
+    .option-item {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+        gap: 8px;
+    }
+
+    .option-item .form-control {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    /* 按钮样式优化 */
+    .layui-btn-sm {
+        padding: 0 12px;
+        height: 34px;
+        line-height: 34px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+
+    .removeclass {
+        background-color: #ff4d4f;
+        border-color: #ff4d4f;
+    }
+
+    .removeclass:hover {
+        background-color: #f5222d !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(245, 34, 45, 0.2);
+    }
+
+    #button_data_value00001 {
+        background-color: #faad14;
+        border-color: #faad14;
+    }
+
+    #button_data_value00001:hover {
+        background-color: #fa8c16 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(250, 173, 20, 0.3);
+    }
+
+    .add-option {
+        background-color: #1890ff;
+        border-color: #1890ff;
+    }
+
+    .add-option:hover {
+        background-color: #096dd9 !important;
+        transform: translateY(-1px);
+    }
+
+    .remove-option {
+        background-color: #ff7a45;
+        border-color: #ff7a45;
+    }
+
+    .remove-option:hover {
+        background-color: #ff4d00 !important;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+        .item-container {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .layui-inline {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .form-control.post-params,
+        select.form-control.post-params {
+            width: 100%;
+            min-width: auto;
+        }
+
+        .options-list {
+            padding-left: 0;
+            margin-top: 10px;
+        }
+    }
+</style>
+
 <script>
     layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
         var form = layui.form
@@ -209,7 +284,7 @@
             , laydate = layui.laydate
             , $ = layui.$;
 
-        // 初始化函数：只控制选项列表的显示状态
+        // 初始化函数：控制选项列表的显示状态
         function setOptionsShow(index, type) {
             // 获取当前索引对应的选项列表
             var $optionsList = $('.options-list-' + index);
@@ -254,7 +329,13 @@
         // 删除整个字段
         $("body").on('click', ".removeclass", function () {
             if (confirm('确定要删除这个字段吗？')) {
-                $(this).closest('.item-container').remove();
+                // 添加删除动画
+                var $container = $(this).closest('.item-container');
+                $container.css('opacity', '0');
+                $container.css('transform', 'translateY(10px)');
+                setTimeout(function() {
+                    $container.remove();
+                }, 200);
             }
         });
 
@@ -270,14 +351,24 @@
                 $optionsListInner = $optionsList;
             }
 
-            var optionHtml = '<div class="option-item">' +
+            var optionHtml = '<div class="option-item" style="opacity:0; transform:translateY(5px);">' +
                 '<input type="text" class="form-control" name="options[' + index + '][]" placeholder="选项内容">' +
                 '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option">' +
                 '<i class="layui-icon">&#xe67e;</i>' +
                 '</button>' +
                 '</div>';
 
-            $optionsListInner.append(optionHtml);
+            var $option = $(optionHtml);
+            $optionsListInner.append($option);
+
+            // 触发动画
+            setTimeout(function() {
+                $option.css('opacity', '1');
+                $option.css('transform', 'translateY(0)');
+            }, 10);
+
+            // 自动聚焦到新添加的输入框
+            $option.find('input').focus();
         });
 
         // 删除单个选项
@@ -285,14 +376,18 @@
             var $optionItem = $(this).closest('.option-item');
             // 确保至少保留一个选项
             if ($optionItem.siblings('.option-item').length > 0 || confirm('确定要删除最后一个选项吗？')) {
-                $optionItem.remove();
+                $optionItem.css('opacity', '0');
+                $optionItem.css('transform', 'translateY(5px)');
+                setTimeout(function() {
+                    $optionItem.remove();
+                }, 200);
             }
         });
 
         // 新增字段
         $("#button_data_value00001").click(function () {
             var newIndex = Date.now() + Math.floor(Math.random() * 1000);
-            var newFieldHtml = '<div class="item-container">' +
+            var newFieldHtml = '<div class="item-container" style="opacity:0; transform:translateY(10px);">' +
                 '<div class="layui-inline">' +
                 '<input type="text" name="data_key[' + newIndex + ']" class="form-control post-params" placeholder="名称">' +
                 '</div>' +
@@ -315,11 +410,22 @@
                 '</div>' +
                 '</div>';
 
-            $("#data_value00001").append(newFieldHtml);
+            var $newField = $(newFieldHtml);
+            $("#data_value00001").append($newField);
             form.render('select'); // 重新渲染select，确保layui样式生效
+
+            // 触发动画
+            setTimeout(function() {
+                $newField.css('opacity', '1');
+                $newField.css('transform', 'translateY(0)');
+            }, 10);
+
+            // 自动聚焦到新字段的输入框
+            $newField.find('input').focus();
         });
     });
 </script>
+
 
 
 
