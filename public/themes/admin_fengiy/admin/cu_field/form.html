@@ -1,0 +1,50 @@
+<!--客户类型:1农户,2牧户,3个体工商户,4公职人员,5政府全资或控股企业正式职工,6社区居民,7民营小微企业,8合作经济组织,9政府全资或控股企业,10行政事业单位,11其他群体-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">客户类型:</label>
+    <div class="layui-input-block col-sm-6">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}"
+                    <if condition="$type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+
+
+<!--备注-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">备注:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="name" class="form-control post-params item-left" value="{$name|default=''}">
+    </div>
+</div>
+
+
+<!--选择内容-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">选择内容:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="value" class="form-control post-params item-left" value="{$value|default=''}">
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
