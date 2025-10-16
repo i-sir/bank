@@ -64,6 +64,7 @@ class CuFieldInit extends Base
         $item['type_name'] = $this->type[$item['type']];//客户类型
         $item['question_type_name'] = $this->question_type[$item['question_type']];
 
+        if ($item['value']) $item['value'] = json_decode($item['value'], true);
 
         /** 处理数据 **/
         if ($this->InterfaceType == 'api') {
@@ -307,6 +308,49 @@ class CuFieldInit extends Base
 
         /** 公共提交,处理数据 **/
 
+        // 1. 安全获取前端参数（带默认值和类型校验）
+        // 字段名称数组（必填）
+        $dataKey = is_array($params['data_key'] ?? null) ? $params['data_key'] : [];
+        // 字段类型数组（text/radio/checkbox，默认空数组）
+        $dataType = is_array($params['data_type'] ?? null) ? $params['data_type'] : [];
+        // 选项列表数组（二维数组，对应radio/checkbox的选项）
+        $options = is_array($params['options'] ?? null) ? $params['options'] : [];
+
+        // 2. 组装结构化数据（与前端表单元素一一对应）
+        $postData = [];
+        foreach ($dataKey as $key => $value) {
+            // 过滤空名称字段
+            $trimmedName = trim((string)$value);
+            if ($trimmedName === '') {
+                continue;
+            }
+
+            // 3. 处理字段类型（默认text，确保值在允许范围内）
+            $fieldType = in_array($dataType[$key] ?? '', ['text', 'radio', 'checkbox'])
+                ? $dataType[$key]
+                : 'text';
+
+            // 4. 处理选项列表（仅radio/checkbox类型需要，过滤空选项）
+            $fieldOptions = [];
+            if (in_array($fieldType, ['radio', 'checkbox']) && is_array($options[$key] ?? null)) {
+                foreach ($options[$key] as $opt) {
+                    $trimmedOpt = trim((string)$opt);
+                    if ($trimmedOpt !== '') {
+                        $fieldOptions[] = $trimmedOpt;
+                    }
+                }
+            }
+
+            // 5. 组装单条字段数据
+            $postData[] = [
+                'name'       => $trimmedName,       // 字段名称（去空）
+                'type'       => $fieldType,         // 字段类型（默认text）
+                'options'    => $fieldOptions,      // 选项列表（仅单选/多选有效）
+            ];
+        }
+
+        // 6. 最终JSON编码（确保与前端回显时的数据结构一致）
+        $params['value'] = json_encode($postData, JSON_UNESCAPED_UNICODE);
 
         if (!empty($where)) {
             //传入where条件,根据条件更新数据

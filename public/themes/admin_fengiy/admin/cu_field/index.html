@@ -48,10 +48,8 @@
             <thead>
             <tr>
                 <th style="">ID</th>
-                <th style="">客户类型</th>
                 <th style="">类型</th>
                 <th style="">备注</th>
-                <th style="">选择内容</th>
                 <th style="">创建时间</th>
 
                 <th>操作</th>
@@ -61,11 +59,8 @@
             <foreach name="list" item="vo">
                 <tr>
                     <td>{$vo.id|default=''}</td>  <!--ID-->
-                    <td>{$vo.type_name|default=''}</td>
-                    <!--客户类型:1农户,2牧户,3个体工商户,4公职人员,5政府全资或控股企业正式职工,6社区居民,7民营小微企业,8合作经济组织,9政府全资或控股企业,10行政事业单位,11其他群体-->
-                    <td>{$vo.question_type_name|default=''}</td>  <!--类型:text=填写,radio=单选,checkbox=多选-->
+                    <td>{$vo.type_name|default=''}</td>  <!--类型-->
                     <td>{$vo.name|default=''}</td>  <!--备注-->
-                    <td>{$vo.value|default=''}</td>  <!--选择内容-->
                     <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) :
                         ''}
                     </td>  <!--创建时间-->

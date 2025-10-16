@@ -1,6 +1,6 @@
 <!--客户类型:1农户,2牧户,3个体工商户,4公职人员,5政府全资或控股企业正式职工,6社区居民,7民营小微企业,8合作经济组织,9政府全资或控股企业,10行政事业单位,11其他群体-->
 <div class="form-group">
-    <label class="col-sm-2 control-label">客户类型:</label>
+    <label class="col-sm-2 control-label">类型:</label>
     <div class="layui-input-block col-sm-6">
         <if condition="!empty($type)">
             <select class="form-control post-params" lay-search lay-filter="type" name="type">
@@ -30,12 +30,10 @@
 </div>
 
 
-<!--自定义表单 两个input,横向排序-->
 <style>
     .layui-btn .layui-icon {
         vertical-align: middle !important;
     }
-
 
     /* 优化输入框和开关的容器样式 */
     #data_value00001 {
@@ -54,7 +52,6 @@
         vertical-align: middle;
     }
 
-
     .form-control.post-params:focus {
         border-color: #1E9FFF;
         box-shadow: 0 0 0 2px rgba(30, 159, 255, 0.2);
@@ -72,6 +69,27 @@
     .switch-text {
         color: #666;
         font-size: 14px;
+    }
+
+    /* 关键调整：选项列表与类型选择器水平对齐 */
+    .options-list {
+        display: none;
+        margin-top: 10px;
+        padding-left: 120px; /* 与上方类型选择器左侧对齐，可根据实际需求微调 */
+        width: 100%;
+    }
+
+    /* 优化选项内部元素对齐 */
+    .option-item {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        gap: 5px;
+    }
+
+    .option-item .form-control {
+        flex: 1; /* 输入框占满剩余宽度，保证排列整齐 */
+        min-width: 200px;
     }
 
     /* 优化按钮样式 */
@@ -129,14 +147,13 @@
                         </div>
 
                         <!-- 选项列表（默认隐藏，多选/单选时显示） -->
-                        <div class="options-list options-list-{$data_index}"
-                             style="display: none; margin-top: 10px;">
+                        <div class="options-list options-list-{$data_index}">
                             <if condition="!empty($data_val.options)">
                                 <foreach item="option" key="opt_index" name="data_val.options">
-                                    <div class="option-item" style="margin-top: 5px;">
+                                    <div class="option-item">
                                         <input type="text" class="form-control" name="options[{$data_index}][]"
                                                value="{$option}" placeholder="选项内容">
-                                        <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option" style="margin-left: 5px;">
+                                        <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option">
                                             <i class="layui-icon">&#xe67e;</i>
                                         </button>
                                     </div>
@@ -173,7 +190,7 @@
                 </div>
 
                 <!-- 选项列表（默认隐藏） -->
-                <div class="options-list options-list-99999999999999" style="display: none; margin-top: 10px;">
+                <div class="options-list options-list-99999999999999">
                     <div class="options-list-inner"></div>
                     <button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option"
                             style="margin-top: 5px;" data-index="99999999999999">
@@ -253,9 +270,9 @@
                 $optionsListInner = $optionsList;
             }
 
-            var optionHtml = '<div class="option-item" style="margin-top: 5px;">' +
+            var optionHtml = '<div class="option-item">' +
                 '<input type="text" class="form-control" name="options[' + index + '][]" placeholder="选项内容">' +
-                '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option" style="margin-left: 5px;">' +
+                '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option">' +
                 '<i class="layui-icon">&#xe67e;</i>' +
                 '</button>' +
                 '</div>';
@@ -288,9 +305,9 @@
                 '</select>' +
                 '</div>' +
                 '<div class="layui-inline">' +
-                '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
                 '</div>' +
-                '<div class="options-list options-list-' + newIndex + '" style="display: none; margin-top: 10px;">' +
+                '<div class="options-list options-list-' + newIndex + '">' +
                 '<div class="options-list-inner"></div>' +
                 '<button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option" style="margin-top: 5px;" data-index="' + newIndex + '">' +
                 '<i class="layui-icon">&#xe654;</i> 添加选项' +
