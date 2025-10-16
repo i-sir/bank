@@ -111,7 +111,7 @@
                             <input class="form-control post-params" name="data_key[{$data_index}]"
                                    placeholder="名称" type="text" value="{$data_val.name}">
                         </div>
-                        <!-- 类型选择器：明确“问答”对应 value="text"，多选/单选对应 radio/checkbox -->
+                        <!-- 类型选择器 -->
                         <div class="layui-inline switch-container">
                             <span class="switch-text">类型:</span>
                             <select name="data_type[{$data_index}]" class="form-control post-params type-select"
@@ -127,10 +127,6 @@
                                 <i class="layui-icon">&#xe67e;</i>
                             </button>
                         </div>
-
-                        <!-- 字段补充说明文本域（始终显示） -->
-                        <textarea class="form-control post-params" name="field_remark[{$data_index}]" rows="2"
-                                  placeholder="字段补充说明（必填/选填等）" style="margin-top: 8px; width: 100%;">{$data_val.field_remark|default=''}</textarea>
 
                         <!-- 选项列表（默认隐藏，多选/单选时显示） -->
                         <div class="options-list options-list-{$data_index}"
@@ -151,16 +147,11 @@
                                 <i class="layui-icon">&#xe654;</i> 添加选项
                             </button>
                         </div>
-
-                        <!-- 目标文本域：默认隐藏，仅多选/单选时显示 -->
-                        <textarea class="form-control post-params radio-checkbox-remark remark-{$data_index}"
-                                  name="remark[{$data_index}]" rows="2" placeholder="补充说明（可选）"
-                                  style="display: none; margin-top: 10px;">{$data_val.remark|default=''}</textarea>
                     </div>
                 </foreach>
             </if>
 
-            <!-- 新增空白字段（初始索引：99999999999999） -->
+            <!-- 新增空白字段 -->
             <div class="item-container">
                 <div class="layui-inline">
                     <input class="form-control post-params" name="data_key[99999999999999]"
@@ -181,10 +172,6 @@
                     </button>
                 </div>
 
-                <!-- 字段补充说明文本域（始终显示） -->
-                <textarea class="form-control post-params" name="field_remark[99999999999999]" rows="2"
-                          placeholder="字段补充说明（必填/选填等）" style="margin-top: 8px; width: 100%;"></textarea>
-
                 <!-- 选项列表（默认隐藏） -->
                 <div class="options-list options-list-99999999999999" style="display: none; margin-top: 10px;">
                     <div class="options-list-inner"></div>
@@ -193,11 +180,6 @@
                         <i class="layui-icon">&#xe654;</i> 添加选项
                     </button>
                 </div>
-
-                <!-- 目标文本域（默认隐藏） -->
-                <textarea class="form-control post-params radio-checkbox-remark remark-99999999999999"
-                          name="remark[99999999999999]" rows="2" placeholder="补充说明（可选）"
-                          style="display: none; margin-top: 10px;"></textarea>
             </div>
         </div>
     </div>
@@ -210,22 +192,20 @@
             , laydate = layui.laydate
             , $ = layui.$;
 
-        // 初始化函数：设置选项列表和文本域的显示状态
-        function setRemarkAndOptionsShow(index, type) {
-            // 获取当前索引对应的元素
+        // 初始化函数：只控制选项列表的显示状态
+        function setOptionsShow(index, type) {
+            // 获取当前索引对应的选项列表
             var $optionsList = $('.options-list-' + index);
-            var $remarkTextarea = $('.remark-' + index);
 
             // 验证元素是否存在
-            if (!$optionsList.length || !$remarkTextarea.length) {
-                console.warn('未找到索引为 ' + index + ' 的元素');
+            if (!$optionsList.length) {
+                console.warn('未找到索引为 ' + index + ' 的选项列表');
                 return;
             }
 
             // 根据类型设置显示状态
             if (type === 'radio' || type === 'checkbox') {
                 $optionsList.show();
-                $remarkTextarea.show();
 
                 // 空选项列表自动添加一个选项
                 if ($optionsList.find('.option-item').length === 0) {
@@ -233,7 +213,6 @@
                 }
             } else {
                 $optionsList.hide();
-                $remarkTextarea.hide();
             }
         }
 
@@ -243,16 +222,16 @@
                 var $this = $(this);
                 var type = $this.val();
                 var index = $this.attr('data-index');
-                setRemarkAndOptionsShow(index, type);
+                setOptionsShow(index, type);
             });
         });
 
-        // 使用layui的form事件监听选择器变化，更可靠
+        // 监听选择器变化
         form.on('select(typeSelect)', function(data) {
             var $select = $(data.elem);
             var index = $select.attr('data-index');
             var selectedType = data.value;
-            setRemarkAndOptionsShow(index, selectedType);
+            setOptionsShow(index, selectedType);
         });
 
         // 删除整个字段
@@ -311,16 +290,12 @@
                 '<div class="layui-inline">' +
                 '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
                 '</div>' +
-                '<textarea class="form-control post-params" name="field_remark[' + newIndex + ']" rows="2" ' +
-                'placeholder="字段补充说明（必填/选填等）" style="margin-top: 8px; width: 100%;"></textarea>' +
                 '<div class="options-list options-list-' + newIndex + '" style="display: none; margin-top: 10px;">' +
                 '<div class="options-list-inner"></div>' +
                 '<button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option" style="margin-top: 5px;" data-index="' + newIndex + '">' +
                 '<i class="layui-icon">&#xe654;</i> 添加选项' +
                 '</button>' +
                 '</div>' +
-                '<textarea class="form-control post-params radio-checkbox-remark remark-' + newIndex + '" name="remark[' + newIndex + ']" rows="2" ' +
-                'placeholder="补充说明（可选）" style="display: none; margin-top: 10px;"></textarea>' +
                 '</div>';
 
             $("#data_value00001").append(newFieldHtml);
@@ -328,6 +303,7 @@
         });
     });
 </script>
+
 
 
 
