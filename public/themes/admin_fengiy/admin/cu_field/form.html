@@ -103,37 +103,39 @@
 </div>
 
 <style>
+    /* 图标垂直居中 */
     .layui-btn .layui-icon {
         vertical-align: middle !important;
     }
 
-    /* 主容器样式 */
+    /* 主容器样式 - 保持原有背景和内边距 */
     #data_value00001 {
         padding: 20px;
         background-color: #f5f7fa;
         border-radius: 6px;
     }
 
-    /* 字段容器样式 - 卡片式设计 */
+    /* 字段容器样式 - 核心调整：进一步增大底部间距（让每个字段包括新增的都更靠下） */
     .item-container {
         display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-        padding: 15px;
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 56px;
+        padding: 16px;
         background-color: #fff;
         border-radius: 4px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
     }
 
+    /* 字段容器hover效果 */
     .item-container:hover {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    /* 添加按钮容器 */
+    /* 添加按钮容器 - 核心调整：增大顶部间距（让“添加字段”按钮更靠下） */
     .add-item-container {
-        margin-top: 10px;
+        margin-top: 15px; /* 从10px增至15px，与上方最后一个字段拉开更多距离 */
         text-align: left;
     }
 
@@ -150,20 +152,22 @@
     .form-field {
         display: flex;
         align-items: center;
-        margin-right: 20px;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 12px;
     }
 
-    /* 名称字段宽度调整 */
+    /* 名称字段 - 取消最小宽度限制 */
     .name-field {
-        min-width: 350px;
+        min-width: auto;
     }
 
-    /* 类型字段宽度调整 */
+    /* 类型字段 - 取消最小宽度限制 */
     .type-field {
-        min-width: 200px;
+        min-width: auto;
     }
 
-    /* 优化输入框和选择器样式 */
+    /* 输入框和选择器基础样式 */
     .form-control.post-params {
         padding: 7px 12px;
         border: 1px solid #ddd;
@@ -172,18 +176,20 @@
         transition: all 0.2s;
     }
 
-    /* 名称输入框加长 */
+    /* 名称输入框 - 适应垂直布局 */
     .name-input {
         width: 100%;
-        min-width: 280px;
+        min-width: auto;
     }
 
+    /* 输入框聚焦效果 */
     .form-control.post-params:focus {
         border-color: #2d8cf0;
         box-shadow: 0 0 0 2px rgba(45, 140, 240, 0.2);
         outline: none;
     }
 
+    /* 选择器样式 */
     select.form-control.post-params {
         min-width: 120px;
         height: 32px;
@@ -192,10 +198,11 @@
 
     /* 操作按钮容器 */
     .form-actions {
-        margin-left: auto;
+        margin-left: 0;
+        margin-top: 8px;
     }
 
-    /* 按钮样式优化 */
+    /* 按钮基础样式 */
     .layui-btn-sm {
         padding: 0 12px;
         height: 32px;
@@ -204,7 +211,7 @@
         transition: all 0.2s;
     }
 
-    /* 删除按钮样式 */
+    /* 删除字段按钮 */
     .removeclass {
         background-color: #f53f3f;
         border-color: #f53f3f;
@@ -216,7 +223,7 @@
         box-shadow: 0 2px 5px rgba(224, 32, 32, 0.2);
     }
 
-    /* 添加按钮样式 */
+    /* 添加字段/选项按钮 */
     #button_data_value00001, .add-option {
         background-color: #00b42a;
         border-color: #00b42a;
@@ -229,6 +236,7 @@
         box-shadow: 0 2px 5px rgba(0, 168, 45, 0.2);
     }
 
+    /* 删除选项按钮 */
     .remove-option {
         background-color: #ff7d00;
         border-color: #ff7d00;
@@ -238,15 +246,16 @@
         background-color: #f57200 !important;
     }
 
-    /* 选项列表样式 - 确保靠左对齐并缩进 */
+    /* 选项列表 */
     .options-list {
         display: none;
         width: 100%;
-        margin-top: 10px;
-        padding-left: 58px; /* 与名称标签对齐 */
+        margin-top: 12px;
+        padding-left: 0;
         animation: fadeIn 0.2s ease;
     }
 
+    /* 选项列表展开动画 */
     @keyframes fadeIn {
         from {
             opacity: 0;
@@ -279,6 +288,7 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
+            margin-bottom: 25px; /* 同步增大移动端字段间距 */
         }
 
         .form-field {
@@ -300,6 +310,10 @@
         .options-list {
             padding-left: 0;
             margin-top: 10px;
+        }
+
+        .add-item-container {
+            margin-top: 15px; /* 同步增大移动端按钮间距 */
         }
     }
 </style>
@@ -339,7 +353,7 @@
             });
         });
 
-        // 监听选择器变化
+        // 监听选择器变化：切换类型时显示/隐藏选项列表
         form.on('select(typeSelect)', function (data) {
             var $select = $(data.elem);
             var index = $select.attr('data-index');
@@ -347,7 +361,7 @@
             setOptionsShow(index, selectedType);
         });
 
-        // 删除整个字段
+        // 删除整个字段：带确认提示和过渡动画
         $("body").on('click', ".removeclass", function () {
             if (confirm('确定要删除这个字段吗？')) {
                 var $container = $(this).closest('.item-container');
@@ -359,7 +373,7 @@
             }
         });
 
-        // 添加选项
+        // 添加选项：带过渡动画，新增后自动聚焦输入框
         $("body").on('click', '.add-option', function () {
             var $this = $(this);
             var index = $this.attr('data-index');
@@ -378,7 +392,6 @@
                 '</div>';
 
             var $option = $(optionHtml);
-            // 将新选项添加到选项列表的末尾
             $optionsListInner.append($option);
 
             setTimeout(function () {
@@ -389,7 +402,7 @@
             $option.find('input').focus();
         });
 
-        // 删除单个选项
+        // 删除单个选项：最后一个选项删除时带确认提示
         $("body").on('click', '.remove-option', function () {
             var $optionItem = $(this).closest('.option-item');
             if ($optionItem.siblings('.option-item').length > 0 || confirm('确定要删除最后一个选项吗？')) {
@@ -401,7 +414,7 @@
             }
         });
 
-        // 新增字段 - 向下添加到列表末尾
+        // 新增字段：向下添加到列表末尾，带过渡动画和自动聚焦
         $("#button_data_value00001").click(function () {
             var newIndex = Date.now() + Math.floor(Math.random() * 1000);
             var newFieldHtml = '<div class="item-container" style="opacity:0; transform:translateY(10px);">' +
@@ -429,7 +442,6 @@
                 '</div>';
 
             var $newField = $(newFieldHtml);
-            // 将新题目添加到添加按钮的前面，实现向下添加的效果
             $(this).closest('.add-item-container').before($newField);
 
             setTimeout(function () {
@@ -438,19 +450,13 @@
             }, 10);
 
             $newField.find('input').focus();
-
-
-            //初始化一下
-            form.render();
+            form.render(); // 重新渲染layui表单，确保选择器生效
         });
 
-
-        //初始化一下
+        // 初始化layui表单
         form.render();
     });
 </script>
-
-
 
 
 
