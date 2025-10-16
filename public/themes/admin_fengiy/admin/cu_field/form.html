@@ -29,6 +29,7 @@
     </div>
 </div>
 
+
 <div class="form-group">
     <div class="layui-form-item">
         <label class="col-sm-2 control-label">基础信息:</label>
@@ -37,23 +38,32 @@
             <if condition="!empty($value)">
                 <foreach item="data_val" key="data_index" name="value">
                     <div class="item-container">
-                        <!-- 字段名称输入框 -->
-                        <div class="layui-inline">
-                            <input class="form-control post-params" name="data_key[{$data_index}]"
-                                   placeholder="名称" type="text" value="{$data_val.name}">
+                        <!-- 字段名称标签和输入框 -->
+                        <div class="form-field name-field">
+                            <span class="field-label">名称:</span>
+                            <input class="form-control post-params name-input" name="data_key[{$data_index}]"
+                                   placeholder="请输入名称" type="text" value="{$data_val.name}">
                         </div>
+
                         <!-- 类型选择器 -->
-                        <div class="layui-inline switch-container">
-                            <span class="switch-text">类型:</span>
+                        <div class="form-field type-field">
+                            <span class="field-label">类型:</span>
                             <select name="data_type[{$data_index}]" class="form-control post-params type-select"
                                     data-index="{$data_index}" lay-filter="typeSelect">
-                                <option value="text" <if condition="$data_val.type eq 'text'">selected</if>>问答</option>
-                                <option value="radio" <if condition="$data_val.type eq 'radio'">selected</if>>单选</option>
-                                <option value="checkbox" <if condition="$data_val.type eq 'checkbox'">selected</if>>多选</option>
+                                <option value="text"
+                                <if condition="$data_val.type eq 'text'">selected</if>
+                                >问答</option>
+                                <option value="radio"
+                                <if condition="$data_val.type eq 'radio'">selected</if>
+                                >单选</option>
+                                <option value="checkbox"
+                                <if condition="$data_val.type eq 'checkbox'">selected</if>
+                                >多选</option>
                             </select>
                         </div>
-                        <!-- 删除按钮 -->
-                        <div class="layui-inline">
+
+                        <!-- 操作按钮 -->
+                        <div class="form-actions">
                             <button class="layui-btn layui-btn-danger layui-btn-sm removeclass" type="button">
                                 <i class="layui-icon">&#xe67e;</i>
                             </button>
@@ -66,14 +76,15 @@
                                     <div class="option-item">
                                         <input type="text" class="form-control" name="options[{$data_index}][]"
                                                value="{$option}" placeholder="选项内容">
-                                        <button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option">
+                                        <button type="button"
+                                                class="layui-btn layui-btn-danger layui-btn-sm remove-option">
                                             <i class="layui-icon">&#xe67e;</i>
                                         </button>
                                     </div>
                                 </foreach>
                             </if>
-                            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option"
-                                    style="margin-top: 5px;" data-index="{$data_index}">
+                            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm add-option"
+                                    data-index="{$data_index}">
                                 <i class="layui-icon">&#xe654;</i> 添加选项
                             </button>
                         </div>
@@ -81,35 +92,11 @@
                 </foreach>
             </if>
 
-            <!-- 新增空白字段 -->
-            <div class="item-container">
-                <div class="layui-inline">
-                    <input class="form-control post-params" name="data_key[99999999999999]"
-                           placeholder="名称" type="text">
-                </div>
-                <div class="layui-inline switch-container">
-                    <span class="switch-text">类型:</span>
-                    <select name="data_type[99999999999999]" class="form-control post-params type-select"
-                            data-index="99999999999999" lay-filter="typeSelect">
-                        <option value="text">问答</option>
-                        <option value="radio">单选</option>
-                        <option value="checkbox">多选</option>
-                    </select>
-                </div>
-                <div class="layui-inline">
-                    <button class="layui-btn layui-btn-warm layui-btn-sm" id="button_data_value00001" type="button">
-                        <i class="layui-icon">&#xe654; </i>
-                    </button>
-                </div>
-
-                <!-- 选项列表（默认隐藏） -->
-                <div class="options-list options-list-99999999999999">
-                    <div class="options-list-inner"></div>
-                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option"
-                            style="margin-top: 5px;" data-index="99999999999999">
-                        <i class="layui-icon">&#xe654;</i> 添加选项
-                    </button>
-                </div>
+            <!-- 新增空白字段按钮 -->
+            <div class="add-item-container">
+                <button class="layui-btn layui-btn-primary layui-btn-sm" id="button_data_value00001" type="button">
+                    <i class="layui-icon">&#xe654; </i> 添加题目
+                </button>
             </div>
         </div>
     </div>
@@ -123,70 +110,152 @@
     /* 主容器样式 */
     #data_value00001 {
         padding: 20px;
-        background-color: #f9fafb;
-        border-radius: 8px;
+        background-color: #f5f7fa;
+        border-radius: 6px;
     }
 
-    /* 字段容器样式 */
+    /* 字段容器样式 - 卡片式设计 */
     .item-container {
-        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
         padding: 15px;
         background-color: #fff;
-        border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
     }
 
     .item-container:hover {
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    /* 添加按钮容器 */
+    .add-item-container {
+        margin-top: 10px;
+        text-align: left;
+    }
+
+    /* 字段标签样式 */
+    .field-label {
+        display: inline-block;
+        width: 50px;
+        color: #666;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    /* 表单字段容器 */
+    .form-field {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+    }
+
+    /* 名称字段宽度调整 */
+    .name-field {
+        min-width: 350px;
+    }
+
+    /* 类型字段宽度调整 */
+    .type-field {
+        min-width: 200px;
     }
 
     /* 优化输入框和选择器样式 */
     .form-control.post-params {
-        padding: 8px 12px;
+        padding: 7px 12px;
         border: 1px solid #ddd;
         border-radius: 4px;
         font-size: 14px;
         transition: all 0.2s;
-        min-width: 200px;
+    }
+
+    /* 名称输入框加长 */
+    .name-input {
+        width: 100%;
+        min-width: 280px;
     }
 
     .form-control.post-params:focus {
-        border-color: #4096ff;
-        box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.2);
+        border-color: #2d8cf0;
+        box-shadow: 0 0 0 2px rgba(45, 140, 240, 0.2);
         outline: none;
     }
 
     select.form-control.post-params {
-        padding: 7px 12px;
         min-width: 120px;
+        height: 32px;
+        line-height: 32px;
     }
 
-    /* 优化开关和文本对齐 */
-    .switch-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        white-space: nowrap;
+    /* 操作按钮容器 */
+    .form-actions {
+        margin-left: auto;
     }
 
-    .switch-text {
-        color: #666;
-        font-size: 14px;
+    /* 按钮样式优化 */
+    .layui-btn-sm {
+        padding: 0 12px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 4px;
+        transition: all 0.2s;
     }
 
-    /* 选项列表样式 - 增加缩进明确层级 */
+    /* 删除按钮样式 */
+    .removeclass {
+        background-color: #f53f3f;
+        border-color: #f53f3f;
+    }
+
+    .removeclass:hover {
+        background-color: #e02020 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(224, 32, 32, 0.2);
+    }
+
+    /* 添加按钮样式 */
+    #button_data_value00001, .add-option {
+        background-color: #00b42a;
+        border-color: #00b42a;
+        color: #fff;
+    }
+
+    #button_data_value00001:hover, .add-option:hover {
+        background-color: #00a82d !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 168, 45, 0.2);
+    }
+
+    .remove-option {
+        background-color: #ff7d00;
+        border-color: #ff7d00;
+    }
+
+    .remove-option:hover {
+        background-color: #f57200 !important;
+    }
+
+    /* 选项列表样式 - 确保靠左对齐并缩进 */
     .options-list {
         display: none;
-        margin-top: 12px;
-        padding-left: 140px; /* 增加缩进，明确是子元素 */
         width: 100%;
+        margin-top: 10px;
+        padding-left: 58px; /* 与名称标签对齐 */
         animation: fadeIn 0.2s ease;
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(5px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* 选项项样式 */
@@ -194,62 +263,14 @@
         display: flex;
         align-items: center;
         margin-top: 8px;
+        margin-bottom: 4px;
         gap: 8px;
     }
 
     .option-item .form-control {
         flex: 1;
-        min-width: 200px;
-    }
-
-    /* 按钮样式优化 */
-    .layui-btn-sm {
-        padding: 0 12px;
-        height: 34px;
-        line-height: 34px;
-        border-radius: 4px;
-        transition: all 0.2s;
-    }
-
-    .removeclass {
-        background-color: #ff4d4f;
-        border-color: #ff4d4f;
-    }
-
-    .removeclass:hover {
-        background-color: #f5222d !important;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(245, 34, 45, 0.2);
-    }
-
-    #button_data_value00001 {
-        background-color: #faad14;
-        border-color: #faad14;
-    }
-
-    #button_data_value00001:hover {
-        background-color: #fa8c16 !important;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(250, 173, 20, 0.3);
-    }
-
-    .add-option {
-        background-color: #1890ff;
-        border-color: #1890ff;
-    }
-
-    .add-option:hover {
-        background-color: #096dd9 !important;
-        transform: translateY(-1px);
-    }
-
-    .remove-option {
-        background-color: #ff7a45;
-        border-color: #ff7a45;
-    }
-
-    .remove-option:hover {
-        background-color: #ff4d00 !important;
+        min-width: 280px;
+        max-width: 500px;
     }
 
     /* 响应式调整 */
@@ -257,15 +278,21 @@
         .item-container {
             flex-direction: column;
             align-items: flex-start;
+            gap: 10px;
         }
 
-        .layui-inline {
-            margin-bottom: 10px;
+        .form-field {
             width: 100%;
+            margin-right: 0;
+            min-width: auto;
         }
 
-        .form-control.post-params,
-        select.form-control.post-params {
+        .form-actions {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+
+        .name-input {
             width: 100%;
             min-width: auto;
         }
@@ -286,20 +313,14 @@
 
         // 初始化函数：控制选项列表的显示状态
         function setOptionsShow(index, type) {
-            // 获取当前索引对应的选项列表
             var $optionsList = $('.options-list-' + index);
-
-            // 验证元素是否存在
             if (!$optionsList.length) {
                 console.warn('未找到索引为 ' + index + ' 的选项列表');
                 return;
             }
 
-            // 根据类型设置显示状态
             if (type === 'radio' || type === 'checkbox') {
                 $optionsList.show();
-
-                // 空选项列表自动添加一个选项
                 if ($optionsList.find('.option-item').length === 0) {
                     $optionsList.find('.add-option').trigger('click');
                 }
@@ -309,8 +330,8 @@
         }
 
         // 页面加载时初始化所有字段的显示状态
-        $(document).ready(function() {
-            $('.type-select').each(function() {
+        $(document).ready(function () {
+            $('.type-select').each(function () {
                 var $this = $(this);
                 var type = $this.val();
                 var index = $this.attr('data-index');
@@ -319,7 +340,7 @@
         });
 
         // 监听选择器变化
-        form.on('select(typeSelect)', function(data) {
+        form.on('select(typeSelect)', function (data) {
             var $select = $(data.elem);
             var index = $select.attr('data-index');
             var selectedType = data.value;
@@ -329,11 +350,10 @@
         // 删除整个字段
         $("body").on('click', ".removeclass", function () {
             if (confirm('确定要删除这个字段吗？')) {
-                // 添加删除动画
                 var $container = $(this).closest('.item-container');
                 $container.css('opacity', '0');
                 $container.css('transform', 'translateY(10px)');
-                setTimeout(function() {
+                setTimeout(function () {
                     $container.remove();
                 }, 200);
             }
@@ -346,7 +366,6 @@
             var $optionsList = $this.closest('.options-list');
             var $optionsListInner = $optionsList.find('.options-list-inner');
 
-            // 如果没有inner容器，直接添加到列表中
             if (!$optionsListInner.length) {
                 $optionsListInner = $optionsList;
             }
@@ -359,72 +378,74 @@
                 '</div>';
 
             var $option = $(optionHtml);
+            // 将新选项添加到选项列表的末尾
             $optionsListInner.append($option);
 
-            // 触发动画
-            setTimeout(function() {
+            setTimeout(function () {
                 $option.css('opacity', '1');
                 $option.css('transform', 'translateY(0)');
             }, 10);
 
-            // 自动聚焦到新添加的输入框
             $option.find('input').focus();
         });
 
         // 删除单个选项
         $("body").on('click', '.remove-option', function () {
             var $optionItem = $(this).closest('.option-item');
-            // 确保至少保留一个选项
             if ($optionItem.siblings('.option-item').length > 0 || confirm('确定要删除最后一个选项吗？')) {
                 $optionItem.css('opacity', '0');
                 $optionItem.css('transform', 'translateY(5px)');
-                setTimeout(function() {
+                setTimeout(function () {
                     $optionItem.remove();
                 }, 200);
             }
         });
 
-        // 新增字段
+        // 新增字段 - 向下添加到列表末尾
         $("#button_data_value00001").click(function () {
             var newIndex = Date.now() + Math.floor(Math.random() * 1000);
             var newFieldHtml = '<div class="item-container" style="opacity:0; transform:translateY(10px);">' +
-                '<div class="layui-inline">' +
-                '<input type="text" name="data_key[' + newIndex + ']" class="form-control post-params" placeholder="名称">' +
+                '<div class="form-field name-field">' +
+                '<span class="field-label">名称:</span>' +
+                '<input type="text" name="data_key[' + newIndex + ']" class="form-control post-params name-input" placeholder="请输入名称">' +
                 '</div>' +
-                '<div class="layui-inline switch-container">' +
-                '<span class="switch-text">类型:</span>' +
+                '<div class="form-field type-field">' +
+                '<span class="field-label">类型:</span>' +
                 '<select name="data_type[' + newIndex + ']" class="form-control post-params type-select" data-index="' + newIndex + '" lay-filter="typeSelect">' +
                 '<option value="text">问答</option>' +
                 '<option value="radio">单选</option>' +
                 '<option value="checkbox">多选</option>' +
                 '</select>' +
                 '</div>' +
-                '<div class="layui-inline">' +
+                '<div class="form-actions">' +
                 '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass"> <i class="layui-icon">&#xe67e;</i> </button>' +
                 '</div>' +
                 '<div class="options-list options-list-' + newIndex + '">' +
                 '<div class="options-list-inner"></div>' +
-                '<button type="button" class="layui-btn layui-btn-normal layui-btn-sm add-option" style="margin-top: 5px;" data-index="' + newIndex + '">' +
+                '<button type="button" class="layui-btn layui-btn-primary layui-btn-sm add-option" data-index="' + newIndex + '">' +
                 '<i class="layui-icon">&#xe654;</i> 添加选项' +
                 '</button>' +
                 '</div>' +
                 '</div>';
 
             var $newField = $(newFieldHtml);
-            $("#data_value00001").append($newField);
-            form.render('select'); // 重新渲染select，确保layui样式生效
+            // 将新题目添加到添加按钮的前面，实现向下添加的效果
+            $(this).closest('.add-item-container').before($newField);
+            form.render('select');
 
-            // 触发动画
-            setTimeout(function() {
+            setTimeout(function () {
                 $newField.css('opacity', '1');
                 $newField.css('transform', 'translateY(0)');
             }, 10);
 
-            // 自动聚焦到新字段的输入框
             $newField.find('input').focus();
         });
     });
 </script>
+
+
+
+
 
 
 
