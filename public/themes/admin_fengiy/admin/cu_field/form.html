@@ -115,7 +115,7 @@
                         <div class="layui-inline switch-container">
                             <span class="switch-text">类型:</span>
                             <select name="data_type[{$data_index}]" class="form-control post-params type-select"
-                                    data-index="{$data_index}">
+                                    data-index="{$data_index}" lay-filter="typeSelect">
                                 <option value="text" <if condition="$data_val.type eq 'text'">selected</if>>问答</option>
                                 <option value="radio" <if condition="$data_val.type eq 'radio'">selected</if>>单选</option>
                                 <option value="checkbox" <if condition="$data_val.type eq 'checkbox'">selected</if>>多选</option>
@@ -130,7 +130,7 @@
 
                         <!-- 字段补充说明文本域（始终显示） -->
                         <textarea class="form-control post-params" name="field_remark[{$data_index}]" rows="2"
-                                  placeholder="字段补充说明（必填/选填等）" style="margin-top: 8px; width: 100%;"></textarea>
+                                  placeholder="字段补充说明（必填/选填等）" style="margin-top: 8px; width: 100%;">{$data_val.field_remark|default=''}</textarea>
 
                         <!-- 选项列表（默认隐藏，多选/单选时显示） -->
                         <div class="options-list options-list-{$data_index}"
@@ -155,7 +155,7 @@
                         <!-- 目标文本域：默认隐藏，仅多选/单选时显示 -->
                         <textarea class="form-control post-params radio-checkbox-remark remark-{$data_index}"
                                   name="remark[{$data_index}]" rows="2" placeholder="补充说明（可选）"
-                                  style="display: none; margin-top: 10px;"></textarea>
+                                  style="display: none; margin-top: 10px;">{$data_val.remark|default=''}</textarea>
                     </div>
                 </foreach>
             </if>
@@ -169,7 +169,7 @@
                 <div class="layui-inline switch-container">
                     <span class="switch-text">类型:</span>
                     <select name="data_type[99999999999999]" class="form-control post-params type-select"
-                            data-index="99999999999999">
+                            data-index="99999999999999" lay-filter="typeSelect">
                         <option value="text">问答</option>
                         <option value="radio">单选</option>
                         <option value="checkbox">多选</option>
@@ -210,46 +210,90 @@
             , laydate = layui.laydate
             , $ = layui.$;
 
-        // 页面加载初始化：确保已有字段的文本域显示状态正确（比如编辑页默认是多选/单选时，文本域要显示）
+        // 初始化函数：设置选项列表和文本域的显示状态
+        function setRemarkAndOptionsShow(index, type) {
+            // 获取当前索引对应的元素
+            var $optionsList = $('.options-list-' + index);
+            var $remarkTextarea = $('.remark-' + index);
+
+            // 验证元素是否存在
+            if (!$optionsList.length || !$remarkTextarea.length) {
+                console.warn('未找到索引为 ' + index + ' 的元素');
+                return;
+            }
+
+            // 根据类型设置显示状态
+            if (type === 'radio' || type === 'checkbox') {
+                $optionsList.show();
+                $remarkTextarea.show();
+
+                // 空选项列表自动添加一个选项
+                if ($optionsList.find('.option-item').length === 0) {
+                    $optionsList.find('.add-option').trigger('click');
+                }
+            } else {
+                $optionsList.hide();
+                $remarkTextarea.hide();
+            }
+        }
+
+        // 页面加载时初始化所有字段的显示状态
         $(document).ready(function() {
             $('.type-select').each(function() {
-                var type = $(this).val();
-                var index = $(this).attr('data-index');
+                var $this = $(this);
+                var type = $this.val();
+                var index = $this.attr('data-index');
                 setRemarkAndOptionsShow(index, type);
             });
         });
 
-        // 1. 删除整个字段
-        $("body").on('click', ".removeclass", function () {
-            $(this).closest('.item-container').remove();
-        });
-
-        // 2. 类型切换：核心逻辑——多选/单选显示文本域，问答（text）隐藏
-        $("body").on('change', '.type-select', function () {
-            var index = $(this).attr('data-index');
-            var selectedType = $(this).val(); // selectedType：text=问答，radio=单选，checkbox=多选
+        // 使用layui的form事件监听选择器变化，更可靠
+        form.on('select(typeSelect)', function(data) {
+            var $select = $(data.elem);
+            var index = $select.attr('data-index');
+            var selectedType = data.value;
             setRemarkAndOptionsShow(index, selectedType);
         });
 
-        // 3. 添加选项
+        // 删除整个字段
+        $("body").on('click', ".removeclass", function () {
+            if (confirm('确定要删除这个字段吗？')) {
+                $(this).closest('.item-container').remove();
+            }
+        });
+
+        // 添加选项
         $("body").on('click', '.add-option', function () {
-            var index = $(this).attr('data-index');
-            var optionsListInner = $(this).siblings('.options-list-inner') || $(this).prev();
+            var $this = $(this);
+            var index = $this.attr('data-index');
+            var $optionsList = $this.closest('.options-list');
+            var $optionsListInner = $optionsList.find('.options-list-inner');
+
+            // 如果没有inner容器，直接添加到列表中
+            if (!$optionsListInner.length) {
+                $optionsListInner = $optionsList;
+            }
+
             var optionHtml = '<div class="option-item" style="margin-top: 5px;">' +
                 '<input type="text" class="form-control" name="options[' + index + '][]" placeholder="选项内容">' +
                 '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm remove-option" style="margin-left: 5px;">' +
                 '<i class="layui-icon">&#xe67e;</i>' +
                 '</button>' +
                 '</div>';
-            optionsListInner.append(optionHtml);
+
+            $optionsListInner.append(optionHtml);
         });
 
-        // 4. 删除单个选项
+        // 删除单个选项
         $("body").on('click', '.remove-option', function () {
-            $(this).closest('.option-item').remove();
+            var $optionItem = $(this).closest('.option-item');
+            // 确保至少保留一个选项
+            if ($optionItem.siblings('.option-item').length > 0 || confirm('确定要删除最后一个选项吗？')) {
+                $optionItem.remove();
+            }
         });
 
-        // 5. 新增字段：同步生成带隐藏属性的文本域
+        // 新增字段
         $("#button_data_value00001").click(function () {
             var newIndex = Date.now() + Math.floor(Math.random() * 1000);
             var newFieldHtml = '<div class="item-container">' +
@@ -258,7 +302,7 @@
                 '</div>' +
                 '<div class="layui-inline switch-container">' +
                 '<span class="switch-text">类型:</span>' +
-                '<select name="data_type[' + newIndex + ']" class="form-control post-params type-select" data-index="' + newIndex + '">' +
+                '<select name="data_type[' + newIndex + ']" class="form-control post-params type-select" data-index="' + newIndex + '" lay-filter="typeSelect">' +
                 '<option value="text">问答</option>' +
                 '<option value="radio">单选</option>' +
                 '<option value="checkbox">多选</option>' +
@@ -278,27 +322,10 @@
                 '<textarea class="form-control post-params radio-checkbox-remark remark-' + newIndex + '" name="remark[' + newIndex + ']" rows="2" ' +
                 'placeholder="补充说明（可选）" style="display: none; margin-top: 10px;"></textarea>' +
                 '</div>';
+
             $("#data_value00001").append(newFieldHtml);
-            form.render('select');
+            form.render('select'); // 重新渲染select，确保layui样式生效
         });
-
-        // 核心控制函数：精准控制文本域显示/隐藏
-        function setRemarkAndOptionsShow(index, type) {
-            // 第一步：先隐藏所有（避免切换类型时残留显示）
-            $('.options-list-' + index).css('display', 'none');
-            $('.remark-' + index).css('display', 'none');
-
-            // 第二步：仅当类型是“单选”或“多选”时，显示文本域和选项列表
-            if (type === 'radio' || type === 'checkbox') {
-                $('.options-list-' + index).css('display', 'block');
-                $('.remark-' + index).css('display', 'block');
-                // 空选项列表自动加一个选项（优化体验）
-                if ($('.options-list-' + index).find('.option-item').length === 0) {
-                    $('.options-list-' + index).find('.add-option').trigger('click');
-                }
-            }
-            // 类型是“问答”（text）时，不执行任何显示操作（保持隐藏）
-        }
     });
 </script>
 
