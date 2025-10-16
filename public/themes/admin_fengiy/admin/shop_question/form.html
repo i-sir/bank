@@ -1,0 +1,259 @@
+<!--类型:1POS特约商户回访记录表,2刚察农商银行惠农金融服务点回访记录表,3聚合支付商户回访记录表-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">类型:</label>
+    <div class="layui-input-block col-sm-6">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}"
+                    <if condition="$type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+<!--类型:radio=单选,image=图片,text=问答-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">类型:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($question_type)">
+            <select class="form-control post-params" lay-search lay-filter="question_type" name="question_type" id="question_type">
+                <foreach item="vo" key="key" name="question_type_list">
+                    <option value="{$key}"
+                    <if condition="$question_type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="question_type" name="question_type" id="question_type">
+                <foreach item="vo" key="key" name="question_type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
+
+<!--题目名称-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">题目名称:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="name" class="form-control post-params item-left" value="{$name|default=''}">
+    </div>
+</div>
+
+
+<!--自定义表单 两个input,横向排序-->
+<style>
+    .layui-btn .layui-icon {
+        vertical-align: middle !important;
+    }
+
+
+    /* 优化输入框和开关的容器样式 */
+    #data_value00001 {
+        padding: 10px 0;
+    }
+
+    #data_value00001 > div {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .layui-inline {
+        vertical-align: middle;
+    }
+
+
+    .form-control.post-params:focus {
+        border-color: #1E9FFF;
+        box-shadow: 0 0 0 2px rgba(30, 159, 255, 0.2);
+        outline: none;
+    }
+
+    /* 优化开关样式和对齐 */
+    .switch-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .switch-text {
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* 优化按钮样式 */
+    .layui-btn-sm {
+        padding: 0 15px;
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .removeclass {
+        transition: all 0.2s;
+    }
+
+    .removeclass:hover {
+        background-color: #f53f3f !important;
+    }
+
+    #button_data_value00001 {
+        transition: all 0.2s;
+    }
+
+    #button_data_value00001:hover {
+        background-color: #ff9900 !important;
+    }
+</style>
+<!--控制器写法
+
+        //处理自定义标签
+        $data_key   = $params['data_key'];
+        $data_value = $params['data_value'];
+        if (!empty($data_key) && !empty($data_value)) {
+            $post_data = [];
+            foreach ($data_key as $key => $value) {
+                if ($value && $data_value[$key]) {
+                    $post_data[$key]['key']   = $value;
+                    $post_data[$key]['value'] = $data_value[$key];
+                }
+            }
+        }
+        $params['post_data'] = serialize($post_data);
+
+-->
+
+<div class="form-group question_type question_typeradio" >
+    <div class="layui-form-item">
+        <label class="col-sm-2 control-label">选项:</label>
+        <div class="col-md-6 col-sm-10" id="data_value00001" style="">
+            <if condition="!empty($value)">
+                <foreach item="data_val" key="data_index" name="value">
+                    <div>
+                        <div class="layui-inline">
+                            <input class="form-control post-params" name="data_key[{$data_index}]" placeholder="名称" type="text"
+                                   value="{$data_val.name}">
+                        </div>
+                        <div class="layui-inline switch-container">
+                            <span class="switch-text">意见:</span>
+                            <input type="checkbox" name="is_remark[{$data_index}]" lay-skin="switch"
+                                   lay-text="是|否" class="post-params"
+                                   value="1"
+                            <if condition="$data_val.is_remark eq 1 ">checked</if>
+                            >
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-danger layui-btn-sm removeclass"
+                                    type="button">
+                                <i class="layui-icon">&#xe67e;</i>
+                            </button>
+                        </div>
+                    </div>
+                </foreach>
+            </if>
+
+            <div>
+                <div class="layui-inline">
+                    <input class="form-control post-params" name="data_key[99999999999999]" placeholder="名称" type="text">
+                </div>
+                <div class="layui-inline switch-container">
+                    <span class="switch-text">意见:</span>
+                    <input type="checkbox" name="is_remark[99999999999999]" lay-skin="switch"
+                           lay-text="是|否" class="post-params" value="1">
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-warm layui-btn-sm" id="button_data_value00001"
+                            type="button">
+                        <i class="layui-icon">&#xe654; </i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['element', 'jquery', 'layer', 'form', 'laydate'], function () {
+            var form = layui.form
+                , element = layui.element
+                , laydate = layui.laydate
+                , $ = layui.$;
+
+            //删除动态添加的input输入框
+            $("body").on('click', ".removeclass", function () {
+                var parentEle = $(this).parent().parent();
+                parentEle.remove();
+            });
+
+            //监听开关状态变化
+            form.on('switch()', function (data) {
+                var checked = data.elem.checked ? 1 : 0;
+                $(data.elem).val(checked);
+            });
+
+            //添加新的选项
+            $("#button_data_value00001").click(function () {
+                // 生成唯一索引
+                var newKey = Date.now() + Math.floor(Math.random() * 1000);
+
+                var str = '<div >' +
+                    '<div class="layui-inline">' +
+                    '<input type="text" name="data_key[' + newKey + ']" class="form-control post-params" placeholder="名称">' +
+                    '</div>' +
+                    '<div class="layui-inline switch-container">' +
+                    '<span class="switch-text">意见:</span>' +
+                    '<input type="checkbox" name="is_remark[' + newKey + ']" lay-skin="switch" ' +
+                    'lay-text="是|否" class="post-params" value="1">' +
+                    '</div>' +
+                    '<div class="layui-inline">' +
+                    '<button type="button" class="layui-btn layui-btn-danger layui-btn-sm removeclass" style="margin-left: 5px;"> <i class="layui-icon">&#xe67e;</i> </button>' +
+                    '</div>' +
+                    '</div>';
+
+                // 在容器末尾添加新元素
+                $("#data_value00001").append(str);
+                form.render('checkbox');
+            });
+        }
+    )
+</script>
+
+
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        let layer = layui.layer, form = layui.form;
+        const showType = $("#question_type").val();
+        setShow(showType)
+        form.on('select(question_type)', function (data) {
+            setShow(data.value)
+        })
+
+        function setShow(showType) {
+            $('.question_type').css('display', 'none');
+            $('.question_type' + showType).css('display', 'block');
+            //可以初始化值为空
+        }
+    });
+</script>
+
+
+
+
+
+
