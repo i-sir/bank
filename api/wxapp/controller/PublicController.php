@@ -439,28 +439,20 @@ class PublicController extends AuthController
     }
 
 
-
-
-
     /**
-     * 小程序授权手机号(授权登录)
-     * @throws \WeChat\Exceptions\InvalidDecryptException
-     * @throws \WeChat\Exceptions\InvalidResponseException
-     * @throws \WeChat\Exceptions\LocalCacheException
+     * 手机号密码登录
      * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\db\exception\DbException
      * @OA\Post(
      *     tags={"小程序公共模块接口"},
-     *     path="/wxapp/public/wx_app_phone",
-     *
-     *
+     *     path="/wxapp/public/pass_login",
      *
      *
      *     @OA\Parameter(
-     *         name="code",
+     *         name="phone",
      *         in="query",
-     *         description="code",
+     *         description="手机号码",
      *         required=false,
      *         @OA\Schema(
      *             type="string",
@@ -468,119 +460,132 @@ class PublicController extends AuthController
      *     ),
      *
      *
-     *
      *     @OA\Parameter(
-     *         name="encrypted_data",
+     *         name="pass",
      *         in="query",
-     *         description="encrypted_data",
+     *         description="密码",
      *         required=false,
      *         @OA\Schema(
      *             type="string",
      *         )
      *     ),
-     *
-     *
-     *
-     *     @OA\Parameter(
-     *         name="iv",
-     *         in="query",
-     *         description="iv",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *         )
-     *     ),
-     *
-     *
-     *
-     *     @OA\Parameter(
-     *         name="invite_code",
-     *         in="query",
-     *         description="邀请码",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *         )
-     *     ),
-     *
-     *
      *
      *
      *     @OA\Response(response="200", description="An example resource"),
      *     @OA\Response(response="default", description="An example resource")
      * )
      *
-     *
-     *   test_environment: http://bank.ikun:9090/api/wxapp/public/wx_app_phone
-     *   official_environment: http://xcxkf213.aubye.com/api/wxapp/public/wx_app_phone
-     *   api: /wxapp/public/wx_app_phone
-     *   remark_name: 小程序授权手机号(授权登录)
+     *   test_environment: http://lscs.ikun:9090/api/wxapp/public/pass_login
+     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/public/pass_login
+     *   api: /wxapp/public/pass_login
+     *   remark_name: 手机号密码登录
      *
      */
-    public function wx_app_phone()
+    public function pass_login()
     {
-        $MemberModel  = new \initmodel\MemberModel();//用户管理
-        $params       = $this->request->param();
-        $check_result = $this->validate($params, 'WxLogin');
-        if ($check_result !== true) $this->error($check_result);
+        $MemberModel     = new \initmodel\MemberModel();//用户管理
+        $params          = $this->request->param();
+        $params['phone'] = trim($params['phone']);
+        if (empty($params['phone'])) $this->error("手机号不能为空！");
+        if (empty($params['pass'])) $this->error("密码不能为空！");
 
+        $map          = [];
+        $map[]        = ['phone', '=', $params['phone']];
+        $findUserInfo = $MemberModel->where($map)->find();
+        if (empty($findUserInfo)) $this->error("用户不存在，请先注册！");
 
-        $mini       = new Crypt($this->wx_config);
-        $wxUserData = $mini->userInfo($params['code'], $params['iv'], $params['encrypted_data']);
-        Log::write('wx_app_phone:wxUserData');
-        Log::write($wxUserData);
-        if (empty($wxUserData)) $this->error('授权失败!');
+        //检测密码是否正确
+        if (!cmf_compare_password($params['pass'], $findUserInfo['pass'])) $this->error("密码错误！");
 
+        //更新登录ip,时间,城市
+        $MemberModel->where($map)->strict(false)->update([
+            'update_time' => time(),
+            'login_time'  => time(),
+            'ip'          => get_client_ip(),
+            'login_city'  => $this->get_ip_to_city(),
+        ]);
 
-        // 授权手机号
-        $user_phone   = $wxUserData['purePhoneNumber'];
-        $user_openid  = $wxUserData['openid'];
-        $user_unionid = $wxUserData['unionid'];
-        $findUserInfo = $MemberModel->where('openid', '=', $user_openid)->field('id,pid')->find();
-
-
-        //邀请板块
-        $pid = 0;
-        if ($params['invite_code']) $pid = $MemberModel->where('invite_code', '=', $params['invite_code'])->value('id');
-
-
-        if (empty($findUserInfo)) {
-            //向数据库插入新用户信息
-            $insert['nickname']    = $this->get_member_wx_nickname();
-            $insert['avatar']      = cmf_get_asset_url(cmf_config('app_logo'));
-            $insert['openid']      = $user_openid;
-            $insert['mini_openid'] = $user_openid;
-            $insert['invite_code'] = $this->get_num_only('invite_code', 5, 4, '', 'member');
-            $insert['phone']       = $user_phone;
-            $insert['unionid']     = $user_unionid;
-            $insert['pid']         = $pid;
-            $insert['create_time'] = time();
-            $insert['login_time']  = time();
-            $insert['ip']          = get_client_ip();
-            $insert['login_city']  = $this->get_ip_to_city();
-
-            $MemberModel->strict(false)->insert($insert);
-        } else {
-            //数据库已存在用户,更新用户登录信息
-            $update['phone']       = $user_phone;
-            $update['unionid']     = $user_unionid;
-            $update['mini_openid'] = $user_openid;
-            $update['update_time'] = time();
-            $update['login_time']  = time();
-            $update['ip']          = get_client_ip();
-            $update['login_city']  = $this->get_ip_to_city();
-            if (empty($findUserInfo['pid']) && $pid && $findUserInfo['id'] != $pid) $update['pid'] = $pid;
-
-            $MemberModel->where('openid', '=', $user_openid)->strict(false)->update($update);
-        }
 
         //查询会员信息
-        $findUserInfo = $this->getUserInfoByOpenid($user_openid);
+        $findUserInfo = $this->getUserInfoByOpenid($findUserInfo['openid']);
+        $this->success("登录成功！", $findUserInfo);
 
-
-        $this->success("授权成功!", $findUserInfo);
     }
 
+
+    /**
+     * 手机号验证码登录
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\db\exception\DbException|\think\Exception
+     * @OA\Post(
+     *     tags={"小程序公共模块接口"},
+     *     path="/wxapp/public/sms_login",
+     *
+     *
+     *     @OA\Parameter(
+     *         name="phone",
+     *         in="query",
+     *         description="手机号码",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
+     *         name="code",
+     *         in="query",
+     *         description="验证码",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://lscs.ikun:9090/api/wxapp/public/sms_login
+     *   official_environment: https://lscs001.jscxkf.net/api/wxapp/public/sms_login
+     *   api: /wxapp/public/sms_login
+     *   remark_name: 手机号验证码登录
+     *
+     */
+    public function sms_login()
+    {
+        $MemberModel     = new \initmodel\MemberModel();//用户管理
+        $params          = $this->request->param();
+        $params['phone'] = trim($params['phone']);
+        if (empty($params['phone'])) $this->error("手机号不能为空！");
+        if (empty($params['code'])) $this->error("验证码不能为空！");
+
+        $map          = [];
+        $map[]        = ['phone', '=', $params['phone']];
+        $findUserInfo = $MemberModel->where($map)->find();
+
+        if (empty($findUserInfo)) $this->error("用户不存在，请先注册！");
+        $result = cmf_check_verification_code($params['phone'], $params['code']);
+        if ($result) $this->error($result);
+
+
+        //更新登录ip,时间,城市
+        $MemberModel->where($map)->strict(false)->update([
+            'update_time' => time(),
+            'login_time'  => time(),
+            'ip'          => get_client_ip(),
+            'login_city'  => $this->get_ip_to_city(),
+        ]);
+
+
+        //查询会员信息
+        $findUserInfo = $this->getUserInfoByOpenid($findUserInfo['openid']);
+
+        $this->success("登录成功！", $findUserInfo);
+    }
 
 
     /**
