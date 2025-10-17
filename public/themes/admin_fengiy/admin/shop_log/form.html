@@ -1,78 +1,51 @@
-
-
-
-
-    <!--用户id-->    <div class="form-group">
-        <label class="col-sm-2 control-label">用户信息:</label>
-        <div class="layui-input-block col-sm-6">
-                            <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
-                    </div>
+<!--用户id-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">用户信息:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="user_id" class="form-control post-params item-left" value="{$user_id|default=''}">
     </div>
+</div>
 
 
-
-
-
-
-
-
-
-
-
-    <!--类型:1POS特约商户回访记录表,2刚察农商银行惠农金融服务点回访记录表,3聚合支付商户回访记录表-->    <div class="form-group">
-        <label class="col-sm-2 control-label">类型:</label>
-        <div class="layui-input-block col-sm-6">
-                                <if condition="!empty($type)">
-    <select class="form-control post-params" lay-search lay-filter="type" name="type">
-        <foreach item="vo" key="key" name="type_list">
-            <option value="{$key}"
-            <if condition="$type eq $key ">selected</if>
-            >{$vo}</option>
-        </foreach>
-    </select>
-    <else/>
-    <select class="form-control post-params" lay-search lay-filter="type" name="type">
-        <foreach item="vo" key="key" name="type_list">
-            <option value="{$key}">{$vo}</option>
-        </foreach>
-    </select>
-</if>
-        </div>
+<!--类型:1POS特约商户回访记录表,2刚察农商银行惠农金融服务点回访记录表,3聚合支付商户回访记录表-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">类型:</label>
+    <div class="layui-input-block col-sm-6">
+        <if condition="!empty($type)">
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}"
+                    <if condition="$type eq $key ">selected</if>
+                    >{$vo}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="type" name="type">
+                <foreach item="vo" key="key" name="type_list">
+                    <option value="{$key}">{$vo}</option>
+                </foreach>
+            </select>
+        </if>
     </div>
+</div>
 
 
-
-
-
-
-
-
-
-
-
-    <!--店铺名称-->    <div class="form-group">
-        <label class="col-sm-2 control-label">店铺名称:</label>
-        <div class="layui-input-block col-sm-6">
-                            <input type="text" name="shop_name" class="form-control post-params item-left" value="{$shop_name|default=''}">
-                    </div>
+<!--店铺名称-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">店铺名称:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="shop_name" class="form-control post-params item-left" value="{$shop_name|default=''}">
     </div>
+</div>
 
 
-
-
-
-
-
-
-
-
-
-    <!--选项-->    <div class="form-group">
-        <label class="col-sm-2 control-label">选项:</label>
-        <div class="layui-input-block col-sm-6">
-                            <input type="text" name="value" class="form-control post-params item-left" value="{$value|default=''}">
-                    </div>
+<!--选项-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">选项:</label>
+    <div class="layui-input-block col-sm-6">
+        <input type="text" name="value" class="form-control post-params item-left" value="{$value|default=''}">
     </div>
+</div>
 
 
 

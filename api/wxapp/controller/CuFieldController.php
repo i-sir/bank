@@ -185,10 +185,10 @@ class CuFieldController extends AuthController
 
             //存款银行信息
             $store_bank_info = [
-                'bank_list'               => $bank_list,
-                'store_total_amount'      => 0,//存款总额
-                'this_store_total_amount' => 0,//本行存款总额
-                'bank_proportion'         => 0,//本行存款占比
+                'bank_list'         => $bank_list,
+                'store_amount'      => 0,//存款总额
+                'this_store_amount' => 0,//本行存款总额
+                'bank_proportion'   => 0,//本行存款占比
             ];
         }
 
@@ -278,37 +278,37 @@ class CuFieldController extends AuthController
         //                        'store_amount' => 12453,//存款金额
         //                    ],
         //                ],
-        //                'store_total_amount'      => 0,//存款总额
-        //                'this_store_total_amount' => 0,//本行存款总额
+        //                'store_amount'      => 0,//存款总额
+        //                'this_store_amount' => 0,//本行存款总额
         //                'bank_proportion'         => 0,//本行存款占比
         //            ];
 
         //计算存款总额 本行存款占比
-        $this_store_total_amount = 0;//本行存款总额
-        $store_total_amount      = 0;//存款总额
+        $this_store_amount = 0;//本行存款总额
+        $store_amount      = 0;//存款总额
 
         //银行列表
         $bank_list = $params['store_bank_info']['bank_list'];
         foreach ($bank_list as $key => $bank_info) {
-            $store_total_amount += $bank_info['store_amount'] ?? 0;
+            $store_amount += $bank_info['store_amount'] ?? 0;
             if ($bank_info['is_level'] == 1) {
-                $this_store_total_amount += $bank_info['store_amount'];
+                $this_store_amount += $bank_info['store_amount'];
             }
         }
 
         //计算本行存款占比（避免除零错误）
-        if ($store_total_amount > 0) {
-            $bank_proportion = ($this_store_total_amount / $store_total_amount) * 100;
+        if ($store_amount > 0) {
+            $bank_proportion = ($this_store_amount / $store_amount) * 100;
         } else {
             $bank_proportion = 0;
         }
 
         //返回结果
         $result = [
-            'bank_list'               => $bank_list,
-            'this_store_total_amount' => $this_store_total_amount,//本行存款总额（这里修正了，原来写的是$store_total_amount）
-            'store_total_amount'      => round($store_total_amount, 2),//存款总额
-            'bank_proportion'         => round($bank_proportion, 2),//本行存款占比
+            'bank_list'         => $bank_list,
+            'this_store_amount' => $this_store_amount,//本行存款总额（这里修正了，原来写的是$store_amount）
+            'store_amount'      => round($store_amount, 2),//存款总额
+            'bank_proportion'   => round($bank_proportion, 2),//本行存款占比
         ];
 
         $this->success("详情数据", $result);

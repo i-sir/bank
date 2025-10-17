@@ -190,7 +190,10 @@
 <div class="wrap js-check-wrap">
 
     <div class="content-container margin-top-20">
+        <!-- 先获取总题目数量用于计算商户名称的序号 -->
+        <?php $totalCount = count($value); ?>
 
+        <!-- 原有题目循环 -->
         <foreach name="value" key="key" item="item">
             <div class="form-group clearfix">
                 <div class="question-title">{$key+1}. {$item.name}</div>
@@ -233,6 +236,13 @@
                 </if>
             </div>
         </foreach>
+
+        <!-- 追加商户名称作为最后一个题目项 -->
+        <div class="form-group clearfix">
+            <div class="question-title"><?php echo $totalCount + 1; ?>. 商户名称</div>
+            <div class="text-answer">{$shop_name}</div>
+        </div>
+
     </div>
 </div>
 
