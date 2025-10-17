@@ -48,7 +48,8 @@ class MemberController extends AdminBaseController
      */
     protected function base_edit()
     {
-
+        $CuSubbranchInit  = new \init\CuSubbranchInit();//支行管理    (ps:InitController)
+        $this->assign('subbranch_list', $CuSubbranchInit->get_list());
     }
 
 

@@ -43,6 +43,9 @@ class MemberInit extends Base
     public function get_my_info($where = [], $params = [])
     {
         $MemberModel = new \initmodel\MemberModel(); //会员管理  (ps:InitModel)
+        $CuSubbranchModel = new \initmodel\CuSubbranchModel(); //支行管理   (ps:InitModel)
+
+
 
         //传入id直接查询
         if (is_string($where) || is_int($where)) $where = ["id" => (int)$where];
@@ -52,6 +55,9 @@ class MemberInit extends Base
 
         //处理公共数据
         if ($item['avatar']) $item['avatar'] = cmf_get_asset_url($item['avatar']);
+
+        //支行名称
+        $item['subbranch_name'] = $CuSubbranchModel->where(['id' => $item['subbranch_id']])->value('name');
 
 
         return $item;
@@ -66,8 +72,12 @@ class MemberInit extends Base
      */
     public function common_item($item = [], $params = [])
     {
+        $CuSubbranchModel = new \initmodel\CuSubbranchModel(); //支行管理   (ps:InitModel)
+
         if ($item['avatar']) $item['avatar'] = cmf_get_asset_url($item['avatar']);
 
+        //支行名称
+        $item['subbranch_name'] = $CuSubbranchModel->where(['id' => $item['subbranch_id']])->value('name');
 
         //接口类型
         if ($params['InterfaceType']) $this->InterfaceType = $params['InterfaceType'];
