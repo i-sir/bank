@@ -162,7 +162,7 @@ class CuFieldController extends AuthController
     public function find_business_list()
     {
         $CuBankModel = new \initmodel\CuBankModel(); //银行管理   (ps:InitModel)
-        $params = $this->request->param();
+        $params      = $this->request->param();
 
 
         $store_bank_ids = $params['store_bank_ids'];
@@ -173,10 +173,11 @@ class CuFieldController extends AuthController
         if ($store_bank_ids) {
             $bank_list = [];
             foreach ($store_bank_ids as $key => $bank_id) {
-                $bank_info = $CuBankModel->where('id','=',$bank_id)->find();
+                $bank_info   = $CuBankModel->where('id', '=', $bank_id)->find();
                 $bank_list[] = [
                     'bank_id'      => $bank_id,
                     'bank_name'    => $bank_info['name'],
+                    'is_level'     => $bank_info['is_level'],
                     'store_type'   => '',//存款方式
                     'store_amount' => '',//存款金额
                 ];
@@ -184,9 +185,10 @@ class CuFieldController extends AuthController
 
             //存款银行信息
             $store_bank_info = [
-                'bank_list'          => $bank_list,
-                'store_total_amount' => 0,//存款总额
-                'bank_proportion'    => 0,//本行存款占比
+                'bank_list'               => $bank_list,
+                'store_total_amount'      => 0,//存款总额
+                'this_store_total_amount' => 0,//本行存款总额
+                'bank_proportion'         => 0,//本行存款占比
             ];
         }
 
@@ -195,7 +197,7 @@ class CuFieldController extends AuthController
         if ($loan_bank_ids) {
             $bank_list = [];
             foreach ($loan_bank_ids as $key => $bank_id) {
-                $bank_info = $CuBankModel->where('id','=',$bank_id)->find();
+                $bank_info   = $CuBankModel->where('id', '=', $bank_id)->find();
                 $bank_list[] = [
                     'bank_id'        => $bank_id,
                     'bank_name'      => $bank_info['name'],
@@ -205,11 +207,111 @@ class CuFieldController extends AuthController
                     'is_credit'      => '',//本行信用客户:1是,2否
                 ];
             }
+
+            $loan_bank_info = [
+                'bank_list' => $bank_list
+            ];
         }
 
 
+        $result = [
+            'store_bank_info' => $store_bank_info ?? [],
+            'loan_bank_info'  => $loan_bank_info ?? [],
+        ];
+
+        $this->success("详情数据", $result);
+    }
 
 
+    /**
+     * 处理存款信息
+     * @OA\Post(
+     *     tags={"基本信息配置"},
+     *     path="/wxapp/cu_field/store_bank_info",
+     *
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="store_bank_info",
+     *         in="query",
+     *         description="存款信息完整数据",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *
+     *
+     *     @OA\Response(response="200", description="An example resource"),
+     *     @OA\Response(response="default", description="An example resource")
+     * )
+     *
+     *   test_environment: http://bank.ikun:9090/api/wxapp/cu_field/store_bank_info
+     *   official_environment: http://xcxkf213.aubye.com/api/wxapp/cu_field/store_bank_info
+     *   api:  /wxapp/cu_field/store_bank_info
+     *   remark_name: 处理存款信息
+     *
+     */
+    public function store_bank_info()
+    {
+        $params = $this->request->param();
+
+        //测试数据
+        //        $params['store_bank_info'] =
+        //            [
+        //                'bank_list' => [
+        //                    [
+        //                        'bank_id'      => 1,
+        //                        'bank_name'    => '测试001',
+        //                        'is_level'     => 1,
+        //                        'store_type'   => '测试',//存款方式
+        //                        'store_amount' => 88614,//存款金额
+        //                    ], [
+        //                        'bank_id'      => 2,
+        //                        'bank_name'    => '测试002',
+        //                        'is_level'     => 1,
+        //                        'store_type'   => '测试22',//存款方式
+        //                        'store_amount' => 12453,//存款金额
+        //                    ],
+        //                ],
+        //                'store_total_amount'      => 0,//存款总额
+        //                'this_store_total_amount' => 0,//本行存款总额
+        //                'bank_proportion'         => 0,//本行存款占比
+        //            ];
+
+        //计算存款总额 本行存款占比
+        $this_store_total_amount = 0;//本行存款总额
+        $store_total_amount      = 0;//存款总额
+
+        //银行列表
+        $bank_list = $params['store_bank_info']['bank_list'];
+        foreach ($bank_list as $key => $bank_info) {
+            $store_total_amount += $bank_info['store_amount'] ?? 0;
+            if ($bank_info['is_level'] == 1) {
+                $this_store_total_amount += $bank_info['store_amount'];
+            }
+        }
+
+        //计算本行存款占比（避免除零错误）
+        if ($store_total_amount > 0) {
+            $bank_proportion = ($this_store_total_amount / $store_total_amount) * 100;
+        } else {
+            $bank_proportion = 0;
+        }
+
+        //返回结果
+        $result = [
+            'bank_list'               => $bank_list,
+            'this_store_total_amount' => $this_store_total_amount,//本行存款总额（这里修正了，原来写的是$store_total_amount）
+            'store_total_amount'      => round($store_total_amount, 2),//存款总额
+            'bank_proportion'         => round($bank_proportion, 2),//本行存款占比
+        ];
+
+        $this->success("详情数据", $result);
     }
 
 

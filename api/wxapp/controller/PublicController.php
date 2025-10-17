@@ -186,9 +186,17 @@ class PublicController extends AuthController
                 $value     = $v['value'];
                 $new_value = [];
                 foreach ($value as $key => $val) {
-                    $new_value[$key]['label']   = $val;
-                    $new_value[$key]['value']   = $val;
-                    $new_value[$key]['checked'] = false;
+                    // key=value
+                    if ($v['name'] == 'customer_type') {
+                        $customer_type_value        = $this->getParams($val, '=');
+                        $new_value[$key]['label']   = $customer_type_value[1];
+                        $new_value[$key]['value']   = $customer_type_value[0];
+                        $new_value[$key]['checked'] = false;
+                    } else {
+                        $new_value[$key]['label']   = $val;
+                        $new_value[$key]['value']   = $val;
+                        $new_value[$key]['checked'] = false;
+                    }
                 }
                 $result[$v['name']] = $new_value;
             }

@@ -5,15 +5,15 @@ namespace init;
 
 /**
  * @Init(
- *     "name"            =>"ShopQuestion",
- *     "name_underline"  =>"shop_question",
- *     "table_name"      =>"shop_question",
- *     "model_name"      =>"ShopQuestionModel",
- *     "remark"          =>"回访配置",
+ *     "name"            =>"CuTown",
+ *     "name_underline"  =>"cu_town",
+ *     "table_name"      =>"cu_town",
+ *     "model_name"      =>"CuTownModel",
+ *     "remark"          =>"乡镇管理",
  *     "author"          =>"",
- *     "create_time"     =>"2025-10-16 11:25:36",
+ *     "create_time"     =>"2025-10-17 16:53:06",
  *     "version"         =>"1.0",
- *     "use"             => new \init\ShopQuestionInit();
+ *     "use"             => new \init\CuTownInit();
  * )
  */
 
@@ -21,12 +21,10 @@ use think\facade\Db;
 use app\admin\controller\ExcelController;
 
 
-class ShopQuestionInit extends Base
+class CuTownInit extends Base
 {
 
-    public $type          = [1 => 'POS特约商户回访记录表', 2 => '刚察农商银行惠农金融服务点回访记录表', 3 => '聚合支付商户回访记录表'];//类型
-    public $is_show       = [1 => '是', 2 => '否'];//显示
-    public $question_type = ['radio' => '单选', 'image' => '图片', 'text' => '问答'];//radio=单选,image=图片,text=问答
+    public $is_show = [1 => '是', 2 => '否'];//显示
 
 
     protected $Field         = "*";//过滤字段,默认全部
@@ -39,8 +37,8 @@ class ShopQuestionInit extends Base
     //本init和model
     public function _init()
     {
-        $ShopQuestionInit  = new \init\ShopQuestionInit();//回访配置   (ps:InitController)
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
     }
 
     /**
@@ -63,18 +61,8 @@ class ShopQuestionInit extends Base
 
 
         /** 处理文字描述 **/
-        $item['type_name']          = $this->type[$item['type']];//类型
-        $item['is_show_name']       = $this->is_show[$item['is_show']];//显示
-        $item['question_type_name'] = $this->question_type[$item['question_type']];
+        $item['is_show_name'] = $this->is_show[$item['is_show']];//显示
 
-
-        //处理数据
-        if ($item['value']) $item['value'] = json_decode($item['value'], true);
-
-        $item['images'] = [];
-        $item['answer'] = '';
-        $item['remark'] = '';
-        $item['fill']   = '';
 
         /** 处理数据 **/
         if ($this->InterfaceType == 'api') {
@@ -131,11 +119,11 @@ class ShopQuestionInit extends Base
      */
     public function get_list($where = [], $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
 
         /** 查询数据 **/
-        $result = $ShopQuestionModel
+        $result = $CuTownModel
             ->where($where)
             ->order($params['order'] ?? $this->Order)
             ->field($params['field'] ?? $this->Field)
@@ -158,6 +146,46 @@ class ShopQuestionInit extends Base
 
 
     /**
+     * 获取 插架格式  列表
+     * @param $where  条件
+     * @param $params 扩充参数 order=排序  field=过滤字段 limit=限制条数  InterfaceType=admin|api后端,前端
+     * @return false|mixed
+     */
+    public function get_plugin_list($where = [], $params = [])
+    {
+        $CuTownModel   = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
+        $CuVillageInit = new \init\CuVillageInit();//村庄管理   (ps:InitController)
+
+
+        /** 查询数据 **/
+        $result = $CuTownModel
+            ->where($where)
+            ->order($params['order'] ?? $this->Order)
+            ->field($params['field'] ?? $this->Field)
+            ->limit($params["limit"] ?? $this->Limit)
+            ->select()
+            ->each(function ($item, $key) use ($params, $CuVillageInit) {
+
+                /** 处理公共数据 **/
+                $item = $this->common_item($item, $params);
+
+                $map                = [];
+                $map[]              = ['pid', '=', $item['id']];
+                $item['child_list'] = $CuVillageInit->get_list($map);
+
+
+                return $item;
+            });
+
+        /** 根据接口类型,返回不同数据类型 **/
+        if ($params['InterfaceType']) $this->InterfaceType = $params['InterfaceType'];
+        if ($this->InterfaceType == 'api' && empty(count($result))) return false;
+
+        return $result;
+    }
+
+
+    /**
      * 分页查询
      * @param $where  条件
      * @param $params 扩充参数 order=排序  field=过滤字段 page_size=每页条数  InterfaceType=admin|api后端,前端
@@ -165,11 +193,11 @@ class ShopQuestionInit extends Base
      */
     public function get_list_paginate($where = [], $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
 
         /** 查询数据 **/
-        $result = $ShopQuestionModel
+        $result = $CuTownModel
             ->where($where)
             ->order($params['order'] ?? $this->Order)
             ->field($params['field'] ?? $this->Field)
@@ -198,10 +226,10 @@ class ShopQuestionInit extends Base
      */
     public function get_join_list($where = [], $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
         /** 查询数据 **/
-        $result = $ShopQuestionModel
+        $result = $CuTownModel
             ->alias('a')
             ->join('member b', 'a.user_id = b.id')
             ->where($where)
@@ -233,14 +261,14 @@ class ShopQuestionInit extends Base
      */
     public function get_find($where = [], $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
         /** 可直接传id,或者where条件 **/
         if (is_string($where) || is_int($where)) $where = ["id" => (int)$where];
         if (empty($where)) return false;
 
         /** 查询数据 **/
-        $item = $ShopQuestionModel
+        $item = $CuTownModel
             ->where($where)
             ->order($params['order'] ?? $this->Order)
             ->field($params['field'] ?? $this->Field)
@@ -305,7 +333,7 @@ class ShopQuestionInit extends Base
      */
     public function edit_post($params, $where = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
 
         /** 查询详情数据 && 需要再打开 **/
@@ -317,44 +345,22 @@ class ShopQuestionInit extends Base
 
 
         /** 公共提交,处理数据 **/
-        // 从参数中获取数据（带默认值避免未定义索引错误）
-        $dataKey  = isset($params['data_key']) ? (array)$params['data_key'] : [];
-        $isRemark = isset($params['is_remark']) ? (array)$params['is_remark'] : [];
-
-        $postData = [];
-
-        // 遍历所有名称字段，确保每个选项都被处理
-        foreach ($dataKey as $key => $value) {
-            // 过滤空值，避免存储无效数据
-            $trimmedValue = trim($value);
-            if ($trimmedValue !== '') {
-                $postData[] = [
-                    'key'       => md5(uniqid(uniqid(rand(), true))),
-                    'name'      => $trimmedValue,
-                    // 处理开关未选择的情况，确保始终有值
-                    'is_remark' => isset($isRemark[$key]) ? (int)$isRemark[$key] : 0
-                ];
-            }
-        }
-
-        // 始终赋值，确保后续使用安全
-        $params['value'] = json_encode($postData, JSON_UNESCAPED_UNICODE);
 
 
         if (!empty($where)) {
             //传入where条件,根据条件更新数据
             $params["update_time"] = time();
-            $result                = $ShopQuestionModel->where($where)->strict(false)->update($params);
+            $result                = $CuTownModel->where($where)->strict(false)->update($params);
             //if ($result) $result = $item["id"];
         } elseif (!empty($params["id"])) {
             //如传入id,根据id编辑数据
             $params["update_time"] = time();
-            $result                = $ShopQuestionModel->where("id", "=", $params["id"])->strict(false)->update($params);
+            $result                = $CuTownModel->where("id", "=", $params["id"])->strict(false)->update($params);
             //if($result) $result = $item["id"];
         } else {
             //无更新条件则添加数据
             $params["create_time"] = time();
-            $result                = $ShopQuestionModel->strict(false)->insert($params, true);
+            $result                = $CuTownModel->strict(false)->insert($params, true);
         }
 
         return $result;
@@ -369,7 +375,7 @@ class ShopQuestionInit extends Base
      */
     public function edit_post_two($params, $where = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
 
         /** 可直接传id,或者where条件 **/
@@ -382,15 +388,15 @@ class ShopQuestionInit extends Base
         if (!empty($where)) {
             //传入where条件,根据条件更新数据
             $params["update_time"] = time();
-            $result                = $ShopQuestionModel->where($where)->strict(false)->update($params);
+            $result                = $CuTownModel->where($where)->strict(false)->update($params);
         } elseif (!empty($params["id"])) {
             //如传入id,根据id编辑数据
             $params["update_time"] = time();
-            $result                = $ShopQuestionModel->where("id", "=", $params["id"])->strict(false)->update($params);
+            $result                = $CuTownModel->where("id", "=", $params["id"])->strict(false)->update($params);
         } else {
             //无更新条件则添加数据
             $params["create_time"] = time();
-            $result                = $ShopQuestionModel->strict(false)->insert($params);
+            $result                = $CuTownModel->strict(false)->insert($params);
         }
 
         return $result;
@@ -406,11 +412,11 @@ class ShopQuestionInit extends Base
      */
     public function delete_post($id, $type = 1, $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
 
-        if ($type == 1) $result = $ShopQuestionModel->destroy($id);//软删除 数据表字段必须有delete_time
-        if ($type == 2) $result = $ShopQuestionModel->destroy($id, true);//真实删除
+        if ($type == 1) $result = $CuTownModel->destroy($id);//软删除 数据表字段必须有delete_time
+        if ($type == 2) $result = $CuTownModel->destroy($id, true);//真实删除
 
         return $result;
     }
@@ -424,14 +430,14 @@ class ShopQuestionInit extends Base
      */
     public function batch_post($id, $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
         $where   = [];
         $where[] = ["id", "in", $id];//$id 为数组
 
 
         $params["update_time"] = time();
-        $result                = $ShopQuestionModel->where($where)->strict(false)->update($params);//修改状态
+        $result                = $CuTownModel->where($where)->strict(false)->update($params);//修改状态
 
         return $result;
     }
@@ -445,12 +451,12 @@ class ShopQuestionInit extends Base
      */
     public function list_order_post($list_order, $params = [])
     {
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置   (ps:InitModel)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
 
         foreach ($list_order as $k => $v) {
             $where   = [];
             $where[] = ["id", "=", $k];
-            $result  = $ShopQuestionModel->where($where)->strict(false)->update(["list_order" => $v, "update_time" => time()]);//排序
+            $result  = $CuTownModel->where($where)->strict(false)->update(["list_order" => $v, "update_time" => time()]);//排序
         }
 
         return $result;
@@ -463,10 +469,10 @@ class ShopQuestionInit extends Base
      */
     public function export_excel($where = [], $params = [])
     {
-        $ShopQuestionInit  = new \init\ShopQuestionInit();//回访配置   (ps:InitController)
-        $ShopQuestionModel = new \initmodel\ShopQuestionModel(); //回访配置  (ps:InitModel)
+        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
+        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理  (ps:InitModel)
 
-        $result = $ShopQuestionInit->get_list($where, $params);
+        $result = $CuTownInit->get_list($where, $params);
 
         $result = $result->toArray();
         foreach ($result as $k => &$item) {
@@ -504,7 +510,7 @@ class ShopQuestionInit extends Base
         //        ];
 
         $Excel = new ExcelController();
-        $Excel->excelExports($result, $headArrValue, ["fileName" => "回访配置"]);
+        $Excel->excelExports($result, $headArrValue, ["fileName" => "乡镇管理"]);
     }
 
 }

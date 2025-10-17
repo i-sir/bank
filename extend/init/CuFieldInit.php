@@ -24,7 +24,7 @@ use app\admin\controller\ExcelController;
 class CuFieldInit extends Base
 {
 
-    public $type = [1 => '农户', 2 => '牧户', 3 => '个体工商户', 4 => '公职人员', 5 => '政府全资或控股企业正式职工', 6 => '社区居民', 7 => '民营小微企业', 8 => '合作经济组织', 9 => '政府全资或控股企业', 10 => '行政事业单位', 11 => '其他群体'];//客户类型
+    public $type          = [1 => '农户', 2 => '牧户', 3 => '个体工商户', 4 => '公职人员', 5 => '政府全资或控股企业正式职工', 6 => '社区居民', 7 => '民营小微企业', 8 => '合作经济组织', 9 => '政府全资或控股企业', 10 => '行政事业单位', 11 => '其他群体'];//客户类型
     public $question_type = ['text' => '填写', 'radio' => '单选', 'checkbox' => '多选'];//类型:text=填写,radio=单选,checkbox=多选
 
     protected $Field         = "*";//过滤字段,默认全部
@@ -61,7 +61,7 @@ class CuFieldInit extends Base
 
 
         /** 处理文字描述 **/
-        $item['type_name'] = $this->type[$item['type']];//客户类型
+        $item['type_name']          = $this->type[$item['type']];//客户类型
         $item['question_type_name'] = $this->question_type[$item['question_type']];
 
         if ($item['value']) $item['value'] = json_decode($item['value'], true);
@@ -343,9 +343,12 @@ class CuFieldInit extends Base
 
             // 5. 组装单条字段数据
             $postData[] = [
-                'name'       => $trimmedName,       // 字段名称（去空）
-                'type'       => $fieldType,         // 字段类型（默认text）
-                'options'    => $fieldOptions,      // 选项列表（仅单选/多选有效）
+                'key'         => md5(uniqid(uniqid(rand(), true))),//唯一标识
+                'name'        => $trimmedName,       // 字段名称（去空）
+                'type'        => $fieldType,         // 字段类型（默认text）
+                'options'     => $fieldOptions,      // 选项列表（仅单选/多选有效）
+                'answer'      => '',      // 单选,填空 答案
+                'answer_list' => [],//多选答案
             ];
         }
 

@@ -1,13 +1,13 @@
- <include file="public@header"/></head>
+<include file="public@header"/></head>
 <body xmlns="http://www.w3.org/1999/html">
 <div class="wrap js-check-wrap">
     <ul class="nav nav-tabs">
         <li class="active"><a href="{:url('index',['pid'=>$pid,'params'=>$params])}">银行管理</a></li>
 
-                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/add')">
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/add')">
             <li><a href="{:url('add',['pid'=>$pid,'params'=>$params])}">添加</a></li>
-            </if>
-        
+        </if>
+
     </ul>
 
     <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
@@ -27,8 +27,7 @@
         <a class="layui-btn layui-bg-red" href="{:url('index',['pid'=>$pid,'params'=>$params])}">清空</a>
 
 
-        
-<!--        <a class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>-->
+        <!--        <a class="layui-btn layui-bg-blue ajax-export" href="javascript:;">导出</a>-->
 
         <!-- 如有导出需把  筛选条件在这里用input回显,input需隐藏-->
         <input type="hidden" name="is_export" class="is_export" value="0">
@@ -41,13 +40,13 @@
         <br>
         <div class="table-actions">
 
-                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
+            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
                 <button class="layui-btn layui-btn-primary layui-border-green layui-btn-xs js-ajax-submit" type="submit"
                         data-action="{:url('list_order_post',['page'=>$page,'pid'=>$pid,'params'=>$params])}">
                     排序
                 </button>
-                </if>
-            
+            </if>
+
 
         </div>
 
@@ -55,76 +54,98 @@
         <table class="table table-hover table-bordered">
             <thead>
             <tr>
-                                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
+                <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
                     <th style="">排序</th>
-                    </if>
-                                    <th style="">ID</th>
-                                    <th style="">名称</th>
-                                    <th style="">存款银行</th>
-                                    <th style="">贷款银行</th>
-                                    <th style="">分层统计</th>
-                                    <th style="">显示</th>
-                                    <th style="">创建时间</th>
-                
+                </if>
+                <th style="">ID</th>
+                <th style="">名称</th>
+                <th style="">存款银行</th>
+                <th style="">贷款银行</th>
+                <th style="">分层统计(本行)</th>
+                <th style="">显示</th>
+                <th style="">创建时间</th>
+
                 <th>操作</th>
             </tr>
             </thead>
             <tbody>
-             <foreach name="list" item="vo">            <tr>
-                                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
-                    <td style="width: 90px;">
-                        <input style="width: 100%;!important;" type="number" min="1" class="form-control input input-order valid post-params" name="list_order[{$vo.id}]"
-                               value="{$vo.list_order}">
-                    </td>
+            <foreach name="list" item="vo">
+                <tr>
+                    <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/list_order_post')">
+                        <td style="width: 90px;">
+                            <input style="width: 100%;!important;" type="number" min="1"
+                                   class="form-control input input-order valid post-params" name="list_order[{$vo.id}]"
+                                   value="{$vo.list_order}">
+                        </td>
                     </if>
-                                    <td>{$vo.id|default=''}</td>  <!--ID-->                                    <td>{$vo.name|default=''}</td>  <!--名称-->                                    <td>
-<!--存款银行--><div class='layui-form'>
-<input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_deposit' name='is_deposit' value='{$vo.id}'
-<if condition='$vo.is_deposit == 1'>checked</if>
->
-</div>
-</td>                                      <td>
-<!--贷款银行--><div class='layui-form'>
-<input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_loan' name='is_loan' value='{$vo.id}'
-<if condition='$vo.is_loan == 1'>checked</if>
->
-</div>
-</td>                                      <td>
-<!--分层统计--><div class='layui-form'>
-<input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_level' name='is_level' value='{$vo.id}'
-<if condition='$vo.is_level == 1'>checked</if>
->
-</div>
-</td>                                      <td>
-<!--显示--><div class='layui-form'>
-<input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_show' name='is_show' value='{$vo.id}'
-<if condition='$vo.is_show == 1'>checked</if>
->
-</div>
-</td>                                      <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) : ''}</td>  <!--创建时间-->                
-                <td>
-                                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/edit')">
-                        <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs" href="{:url('edit',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}">编辑</a>
-                        </if>
-                                            <div style="display: none;">
-                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/edit')">
+                    <td>{$vo.id|default=''}</td>  <!--ID-->
+                    <td>{$vo.name|default=''}</td>  <!--名称-->
+                    <td>
+                        <!--存款银行-->
+                        <div class='layui-form'>
+                            <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_deposit'
+                                   name='is_deposit' value='{$vo.id}'
+                            <if condition='$vo.is_deposit == 1'>checked</if>
+                            >
+                        </div>
+                    </td>
+                    <td>
+                        <!--贷款银行-->
+                        <div class='layui-form'>
+                            <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_loan' name='is_loan'
+                                   value='{$vo.id}'
+                            <if condition='$vo.is_loan == 1'>checked</if>
+                            >
+                        </div>
+                    </td>
+                    <td>
+                        <!--分层统计-->
+                        <div class='layui-form'>
+                            <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_level'
+                                   name='is_level' value='{$vo.id}'
+                            <if condition='$vo.is_level == 1'>checked</if>
+                            >
+                        </div>
+                    </td>
+                    <td>
+                        <!--显示-->
+                        <div class='layui-form'>
+                            <input type='checkbox' lay-skin='switch' lay-text='是|否' lay-filter='is_show' name='is_show'
+                                   value='{$vo.id}'
+                            <if condition='$vo.is_show == 1'>checked</if>
+                            >
+                        </div>
+                    </td>
+                    <td>{:isset($vo.create_time) && $vo.create_time > 10000 ? date('Y-m-d H:i:s', $vo.create_time) :
+                        ''}
+                    </td>  <!--创建时间-->
+                    <td>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/edit')">
                             <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
-                               href="javascript:parent.openIframeLayer('{:url('edit',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}','编辑',{ area: ['65%', '85%'],move:'.layui-layer-title'},true);"
-                            >编辑(弹框-更改后台方法,跳转页面)</a>
+                               href="{:url('edit',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}">编辑</a>
+                        </if>
+                        <div style="display: none;">
+                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/edit')">
+                                <a class="layui-btn layui-btn-primary layui-border-green layui-btn-xs"
+                                   href="javascript:parent.openIframeLayer('{:url('edit',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}','编辑',{ area: ['65%', '85%'],move:'.layui-layer-title'},true);"
+                                >编辑(弹框-更改后台方法,跳转页面)</a>
                             </if>
                         </div>
-                                            <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/delete')">
-                        <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete" href="{:url('delete',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}">删除</a>
+                        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/cu_bank/delete')">
+                            <a class="layui-btn layui-btn-primary layui-border-red layui-btn-xs js-ajax-delete"
+                               href="{:url('delete',['id'=>$vo.id,'pid'=>$pid,'page'=>$page,'params'=>$params])}">删除</a>
                         </if>
-                    
 
-                </td>
-            </tr>
-            </foreach>            </tbody>
+
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
         </table>
     </form>
 
-    <div class="pagination">{$pagination|default=''}</div></div>
+    <div class="pagination">{$pagination|default=''}</div>
+</div>
 <script src="__STATIC__/js/admin.js"></script>
 </body>
 </html>
@@ -139,29 +160,27 @@
 
 
         //存款银行
-form.on('switch(is_deposit)', function (data) {
-    batchPost(data.value, 'is_deposit', this.checked ? 1 : 2)
-});
+        form.on('switch(is_deposit)', function (data) {
+            batchPost(data.value, 'is_deposit', this.checked ? 1 : 2)
+        });
 
 
 //贷款银行
-form.on('switch(is_loan)', function (data) {
-    batchPost(data.value, 'is_loan', this.checked ? 1 : 2)
-});
+        form.on('switch(is_loan)', function (data) {
+            batchPost(data.value, 'is_loan', this.checked ? 1 : 2)
+        });
 
 
 //分层统计
-form.on('switch(is_level)', function (data) {
-    batchPost(data.value, 'is_level', this.checked ? 1 : 2)
-});
+        form.on('switch(is_level)', function (data) {
+            batchPost(data.value, 'is_level', this.checked ? 1 : 2)
+        });
 
 
 //显示
-form.on('switch(is_show)', function (data) {
-    batchPost(data.value, 'is_show', this.checked ? 1 : 2)
-});
-
-
+        form.on('switch(is_show)', function (data) {
+            batchPost(data.value, 'is_show', this.checked ? 1 : 2)
+        });
 
 
     });
