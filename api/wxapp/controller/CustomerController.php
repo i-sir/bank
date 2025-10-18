@@ -611,6 +611,17 @@ class CustomerController extends AuthController
      *     ),
      *
      *
+     *    @OA\Parameter(
+     *         name="town_id",
+     *         in="query",
+     *         description="乡镇id",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
      *
      *    @OA\Parameter(
      *         name="type",
@@ -641,7 +652,7 @@ class CustomerController extends AuthController
         // 初始化数据模型：用于后续数据库查询操作
         $CustomerModel = new \initmodel\CustomerModel(); // 客户信息模型（存储客户基本信息）
         $CuBankModel   = new \initmodel\CuBankModel();   // 银行管理模型（存储银行信息及分类）
-        $CuTownInit    = new \init\CuTownInit();         // 乡镇管理初始化类（获取乡镇列表数据）
+        $CuVillageInit = new \init\CuVillageInit();//村庄管理   (ps:InitController)
 
         $params = $this->request->param(); // 获取请求参数：包含时间维度参数（date）等
 
@@ -779,8 +790,6 @@ class CustomerController extends AuthController
         $attributionResult['series'] = [$series_list];
 
 
-
-
         /**
          * 银行基础数据查询
          * 区分"本行"和"其他银行"，为后续贷款/存款统计提供判断依据
@@ -861,7 +870,9 @@ class CustomerController extends AuthController
             $storeRatio = number_format(($storeTotal / $totalPeople) * 100, 2);
         }
         $ratioResult = [
+            'loan_number'  => $loanTotal, // 贷款人数
             'loan_ratio'   => $loanRatio, // 贷款占比（百分比）
+            'store_number' => $storeTotal,// 存款人数
             'store_ratio'  => $storeRatio, // 存款占比（百分比）
             'total_people' => $totalPeople // 总人数（参考用）
         ];
@@ -887,16 +898,21 @@ class CustomerController extends AuthController
         ];
 
         /**
-         * 地区统计（按乡镇）
+         * 地区统计（按村庄）
          * 统计各乡镇的客户数量及占总客户数的百分比
          */
-        $totalNumber = $CustomerModel->where($currentMap)->count(); // 当前时间段总客户数
-        $townList    = $CuTownInit->get_list(); // 获取所有乡镇列表
-        $townResult  = []; // 地区统计结果集
-        foreach ($townList as $town) {
+        $totalNumber = $CustomerModel->where($currentMap)->where('town_id', '=', $params['town_id'])->count(); // 当前时间段总客户数
+
+        $villageMap   = [];
+        $villageMap[] = ['pid', '=', $params['town_id']];
+        $villageMap[] = ['is_show', '=', 1];
+        $villageList  = $CuVillageInit->get_list($villageMap); // 获取所有乡镇列表
+        $townResult   = []; // 地区统计结果集
+        foreach ($villageList as $village) {
             // 乡镇过滤条件（严格遵循格式）
             $townFilter   = [];
-            $townFilter[] = ['town_id', '=', $town['id']]; // 条件：乡镇ID=当前乡镇ID
+            $townFilter[] = ['village_id', '=', $village['id']]; // 条件：村庄id
+            $townFilter[] = ['town_id', '=', $params['town_id']]; // 条件：乡镇ID=当前乡镇ID
 
             // 统计当前乡镇的客户数量
             $count = $CustomerModel->where(array_merge($currentMap, $townFilter))->count();
@@ -904,7 +920,8 @@ class CustomerController extends AuthController
             $percentage = $totalNumber > 0 ? number_format(($count / $totalNumber) * 100, 2) : 0;
 
             $townResult[] = [
-                'name'       => $town['name'], // 乡镇名称
+                'id'         => $village['id'],
+                'name'       => $village['name'], // 乡镇名称
                 'number'     => $count, // 客户数量
                 'percentage' => $percentage // 占比（百分比）
             ];
