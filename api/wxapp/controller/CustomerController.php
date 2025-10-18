@@ -78,6 +78,58 @@ class CustomerController extends AuthController
      *
      *
      *
+     *    @OA\Parameter(
+     *         name="ascription",
+     *         in="query",
+     *         description="客户归属:1本行客户,2他行客户,3交叉客户,4空白客户",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *
+     *    @OA\Parameter(
+     *         name="level",
+     *         in="query",
+     *         description="客户分层:1战略客户,2重点客户,3价值客户,4一般客户,5长尾客户",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *
+     *    @OA\Parameter(
+     *         name="star",
+     *         in="query",
+     *         description="星级:1准星级,2二星级,3三星级,4四星级,5五星级,6六星级,7七星级,8私人银行级",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *    @OA\Parameter(
+     *         name="town_id",
+     *         in="query",
+     *         description="乡镇id",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
+     *
+     *    @OA\Parameter(
+     *         name="village_id",
+     *         in="query",
+     *         description="村庄id",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *         )
+     *     ),
      *
      *
      *
@@ -142,9 +194,14 @@ class CustomerController extends AuthController
         $where   = [];
         $where[] = ['id', '>', 0];
         $where[] = ['user_id', '=', $this->user_id];
-        if ($params["keyword"]) $where[] = ["username", "like", "%{$params['keyword']}%"];
+        if ($params["keyword"]) $where[] = ["username|id_number|phone", "like", "%{$params['keyword']}%"];
         if ($params["status"]) $where[] = ["status", "=", $params["status"]];
         if ($params['type']) $where[] = ['type', '=', $params['type']];
+        if ($params['ascription']) $where[] = ['ascription', '=', $params['ascription']];
+        if ($params['level']) $where[] = ['level', '=', $params['level']];
+        if ($params['star']) $where[] = ['star', '=', $params['star']];
+        if ($params['town_id']) $where[] = ['town_id', '=', $params['town_id']];
+        if ($params['village_id']) $where[] = ['village_id', '=', $params['village_id']];
 
 
         /** 查询数据 **/
@@ -213,10 +270,10 @@ class CustomerController extends AuthController
 
 
     /**
-     * 客户信息记录 添加
+     * 客户信息记录 添加&编辑
      * @OA\Post(
      *     tags={"客户信息记录"},
-     *     path="/wxapp/customer/add_customer",
+     *     path="/wxapp/customer/edit_customer",
      *
      *
      *
@@ -408,14 +465,15 @@ class CustomerController extends AuthController
      *     @OA\Response(response="default", description="An example resource")
      * )
      *
-     *   test_environment: http://bank.ikun:9090/api/wxapp/customer/add_customer
-     *   official_environment: http://xcxkf213.aubye.com/api/wxapp/customer/add_customer
-     *   api:  /wxapp/customer/add_customer
+     *   test_environment: http://bank.ikun:9090/api/wxapp/customer/edit_customer
+     *   official_environment: http://xcxkf213.aubye.com/api/wxapp/customer/edit_customer
+     *   api:  /wxapp/customer/edit_customer
      *   remark_name: 客户信息记录 添加
      *
      */
-    public function add_customer()
+    public function edit_customer()
     {
+        $this->checkAuth();
         $CustomerInit  = new \init\CustomerInit();//客户信息记录    (ps:InitController)
         $CustomerModel = new \initmodel\CustomerModel(); //客户信息记录   (ps:InitModel)
         $CuLevelModel  = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
@@ -445,6 +503,7 @@ class CustomerController extends AuthController
 
         //本行存款总额
         $this_store_amount = $params['store_bank_info']['this_store_amount'] ?? 0;
+        if ($this_store_amount > 0) $this_store_amount = $this_store_amount * 10000;//万单位
 
         //算出客户分层&星级
         $level_info = $CuLevelModel->where('min', '<=', $this_store_amount)

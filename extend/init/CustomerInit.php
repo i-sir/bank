@@ -30,6 +30,36 @@ class CustomerInit extends Base
     public $star       = [1 => '准星级', 2 => '二星级', 3 => '三星级', 4 => '四星级', 5 => '五星级', 6 => '六星级', 7 => '七星级', 8 => '私人银行级'];//星级
     public $is_credit  = [1 => '是', 2 => '否'];//本行信用客户
 
+    // 1. 定义type与名称标签的映射关系
+    public $nameLabelMap = [
+        1  => '户主姓名',
+        2  => '户主姓名',
+        3  => '商户名称',
+        4  => '姓名',
+        5  => '姓名',
+        6  => '户主姓名',
+        7  => '企业名称',
+        8  => '主体名称',
+        9  => '企业名称',
+        10 => '单位名称',
+        11 => '客户名称'
+    ];
+
+    // 2. 定义type与证件标签的映射关系
+    public $idLabelMap = [
+        1  => '身份证号码',
+        2  => '身份证号码',
+        3  => '身份证号码',
+        4  => '身份证号码',
+        5  => '身份证号码',
+        6  => '身份证号码',
+        7  => '统一社会信用代码',
+        8  => '统一社会信用代码',
+        9  => '统一社会信用代码',
+        10 => '统一社会信用代码',
+        11 => '身份证号码'
+    ];
+
 
     protected $Field         = "*";//过滤字段,默认全部
     protected $Limit         = 100000;//如不分页,展示条数
@@ -64,11 +94,11 @@ class CustomerInit extends Base
 
 
         /** 数据格式(公共部分),find详情&&list列表 共存数据 **/
-        $village_info = $CuVillageModel->where('id','=',$item['village_id'])->find();
+        $village_info         = $CuVillageModel->where('id', '=', $item['village_id'])->find();
         $item['village_info'] = $village_info;
         $item['village_name'] = $village_info['name'];
 
-        $town_info = $CuTownModel->where('id','=',$item['town_id'])->find();
+        $town_info         = $CuTownModel->where('id', '=', $item['town_id'])->find();
         $item['town_info'] = $town_info;
         $item['town_name'] = $town_info['name'];
 
@@ -79,6 +109,8 @@ class CustomerInit extends Base
         $item['level_name']      = $this->level[$item['level']];//客户分层
         $item['star_name']       = $this->star[$item['star']];//星级
         $item['is_credit_name']  = $this->is_credit[$item['is_credit']];//本行信用客户
+        $item['username_text']   = $this->nameLabelMap[$item['type']] ?? ''; // 名称标签（如“户主姓名”）
+        $item['id_number_text']  = $this->idLabelMap[$item['type']] ?? '';     // 证件标签（如“身份证号码”）
 
 
         //处理json数据
@@ -320,8 +352,8 @@ class CustomerInit extends Base
 
 
         /** 查询详情数据 && 需要再打开 **/
-        //if (!empty($params["id"])) $item = $this->get_find(["id" => $params["id"]],["DataFormat"=>"list"]);
-        //if (empty($params["id"]) && !empty($where)) $item = $this->get_find($where,["DataFormat"=>"list"]);
+        if (!empty($params["id"])) $item = $this->get_find(["id" => $params["id"]], ["DataFormat" => "list"]);
+        if (empty($params["id"]) && !empty($where)) $item = $this->get_find($where, ["DataFormat" => "list"]);
 
         /** 可直接传id,或者where条件 **/
         if (is_string($where) || is_int($where)) $where = ["id" => (int)$where];
@@ -337,12 +369,12 @@ class CustomerInit extends Base
             //传入where条件,根据条件更新数据
             $params["update_time"] = time();
             $result                = $CustomerModel->where($where)->strict(false)->update($params);
-            //if ($result) $result = $item["id"];
+            if ($result) $result = $item["id"];
         } elseif (!empty($params["id"])) {
             //如传入id,根据id编辑数据
             $params["update_time"] = time();
             $result                = $CustomerModel->where("id", "=", $params["id"])->strict(false)->update($params);
-            //if($result) $result = $item["id"];
+            if ($result) $result = $item["id"];
         } else {
             //无更新条件则添加数据
             $params["create_time"] = time();

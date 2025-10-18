@@ -187,10 +187,10 @@ class PublicController extends AuthController
                 $new_value = [];
                 foreach ($value as $key => $val) {
                     // key=value
-                    if ($v['name'] == 'customer_type') {
-                        $customer_type_value        = $this->getParams($val, '=');
-                        $new_value[$key]['label']   = $customer_type_value[1];
-                        $new_value[$key]['value']   = $customer_type_value[0];
+                    if (in_array($v['name'], ['customer_type', 'customer_attribution', 'customer_segmentation'])) {
+                        $eq_value                   = $this->getParams($val, '=');
+                        $new_value[$key]['label']   = $eq_value[1];
+                        $new_value[$key]['value']   = $eq_value[0];
                         $new_value[$key]['checked'] = false;
                     } else {
                         $new_value[$key]['label']   = $val;
