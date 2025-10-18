@@ -1,0 +1,533 @@
+<include file="public@header"/>
+<style>
+    /* 基础样式重置与通用设置 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #f5f7fa;
+        color: #333333;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+    }
+
+    .wrap {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 0 16px;
+    }
+
+    /* 标签页样式优化 - 更简洁现代 */
+    .layui-tab {
+        margin: 0;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .layui-tab-title {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-bottom: none;
+        padding: 0 24px;
+    }
+
+    .layui-tab-title li {
+        font-size: 16px;
+        padding: 16px 28px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-right: 8px;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s ease;
+    }
+
+    .layui-tab-title .layui-this {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.15);
+        font-weight: 600;
+    }
+
+    .layui-tab-title .layui-this:after {
+        display: none;
+    }
+
+    .layui-tab-content {
+        padding: 32px;
+        background-color: #ffffff;
+        min-height: 600px;
+    }
+
+    /* 区块标题样式 */
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 24px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #ecf0f1;
+        position: relative;
+    }
+
+    .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .subsection-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #34495e;
+        margin: 28px 0 16px 0;
+        padding-left: 12px;
+        border-left: 4px solid #3498db;
+    }
+
+    /* 信息组样式优化 - 强调展示效果 */
+    .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        padding: 16px 20px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border-left: 4px solid #e1e8ed;
+        transition: all 0.2s ease;
+    }
+
+    .form-group:hover {
+        background: #f1f8ff;
+        border-left-color: #3498db;
+        transform: translateX(4px);
+    }
+
+    .control-label {
+        width: 160px;
+        font-weight: 500;
+        color: #2c3e50;
+        text-align: right;
+        padding-right: 20px;
+        flex-shrink: 0;
+        font-size: 14px;
+    }
+
+    .layui-input-block {
+        flex: 1;
+        min-height: auto;
+        margin-left: 0;
+    }
+
+    .info-content {
+        padding: 10px 16px;
+        color: #2c3e50;
+        font-size: 15px;
+        background: #ffffff;
+        border-radius: 6px;
+        border: 1px solid #e1e8ed;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        line-height: 1.8;
+    }
+
+    /* 选项展示优化 */
+    .option-item {
+        display: inline-block;
+        margin-right: 16px;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .option-item.selected {
+        background-color: #e8f4fd;
+        color: #3498db;
+        border: 1px solid #d6eaf8;
+    }
+
+    .option-item:not(.selected) {
+        color: #7f8c8d;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+    }
+
+    /* 银行信息特殊样式 */
+    .bank-section {
+        background: #f0f7ff;
+        border-radius: 10px;
+        padding: 24px;
+        margin: 24px 0;
+        border: 1px solid #d6e4ff;
+    }
+
+    .bank-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #d6e4ff;
+    }
+
+    .bank-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2980b9;
+    }
+
+    .selected-count {
+        background: #3498db;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .bank-item {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 16px 0;
+        border: 1px solid #e1e8ed;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .bank-name {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f1f3f5;
+        font-size: 16px;
+    }
+
+    /* 分隔线样式 */
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #bdc3c7, transparent);
+        margin: 32px 0;
+    }
+
+    .dashed-divider {
+        height: 1px;
+        background: repeating-linear-gradient(90deg, #bdc3c7, #bdc3c7 4px, transparent 4px, transparent 8px);
+        margin: 24px 0;
+    }
+
+    /* 统计信息样式 */
+    .summary-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 24px;
+        border-radius: 10px;
+        margin: 24px 0;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px dashed rgba(255,255,255,0.1);
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-label {
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    /* 客户归属特殊样式 */
+    .customer-tags {
+        display: flex;
+        gap: 16px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        padding: 16px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 25px;
+        font-weight: 600;
+        text-align: center;
+        flex: 1;
+        min-width: 200px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .tag:hover {
+        transform: translateY(-3px);
+    }
+
+    .tag-label {
+        display: block;
+        font-size: 13px;
+        opacity: 0.9;
+        margin-bottom: 6px;
+    }
+
+    .tag-value {
+        display: block;
+        font-size: 18px;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+        .form-group {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .control-label {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+            padding-right: 0;
+            font-weight: 600;
+        }
+
+        .layui-tab-content {
+            padding: 20px 16px;
+        }
+
+        .customer-tags {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .layui-tab-title li {
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        .bank-section {
+            padding: 16px;
+        }
+
+        .bank-item {
+            padding: 16px;
+        }
+
+        .option-item {
+            margin-bottom: 8px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基本信息</li>
+            <li>业务信息</li>
+            <li>客户归属</li>
+        </ul>
+
+        <div class="layui-tab-content">
+            <!-- 基本信息标签页 -->
+            <div class="layui-tab-item layui-show">
+                <h2 class="section-title">基本信息</h2>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所在乡镇:</label>
+                    <div class="layui-input-block info-content">
+                        {$town_name|default=''}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所属行政村:</label>
+                    <div class="layui-input-block info-content">
+                        {$village_name|default=''}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">客户类型:</label>
+                    <div class="layui-input-block info-content">
+                        农户
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">户主姓名:</label>
+                    <div class="layui-input-block info-content">
+                        {$username|default=''}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">身份证号:</label>
+                    <div class="layui-input-block info-content">
+                        {$id_number|default=''}
+                    </div>
+                </div>
+
+                <!-- 动态信息字段 -->
+                <foreach name="$information_info" item="information_item">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{$information_item.name}:</label>
+                        <div class="layui-input-block info-content">
+                            <if condition="in_array($information_item.type,['text'])">
+                                {$information_item.answer}
+                            </if>
+
+
+                            <if condition="in_array($information_item.type,['radio'])">
+                                <foreach name="$information_item.options" item="option">
+                                    <if condition="$information_item.answer eq $option">
+                                        <div class="option-item selected">{$option}</div>
+                                        <else/>
+                                        <div class="option-item">{$option}</div>
+                                    </if>
+                                </foreach>
+                            </if>
+
+                            <if condition="in_array($information_item.type,['checkbox'])">
+                                <foreach name="$information_item.options" item="option">
+                                    <if condition="in_array($option,$information_item.answer)">
+                                        <div class="option-item selected">{$option}</div>
+                                        <else/>
+                                        <div class="option-item">{$option}</div>
+                                    </if>
+                                </foreach>
+                            </if>
+                        </div>
+                    </div>
+                </foreach>
+            </div>
+
+            <!-- 业务信息标签页 -->
+            <div class="layui-tab-item">
+                <h2 class="section-title">业务信息</h2>
+
+                <!-- 存款银行信息 -->
+                <div class="bank-section">
+                    <div class="bank-header">
+                        <div class="bank-title">存款银行</div>
+                        <div class="selected-count">已选择{$store_bank_info.bank_list|count}家</div>
+                    </div>
+
+                    <foreach name="$store_bank_info.bank_list" item="bank_info">
+                        <div class="bank-item">
+                            <div class="bank-name">{$bank_info.bank_name}</div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">存款类型:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.store_type}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">存款余额/万元:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.store_amount}
+                                </div>
+                            </div>
+                        </div>
+                    </foreach>
+
+                    <div class="dashed-divider"></div>
+
+                    <div class="summary-info">
+                        <div class="summary-item">
+                            <span class="summary-label">存款总额/万元</span>
+                            <span class="summary-value">{$store_bank_info.store_amount}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">本行存款占比</span>
+                            <span class="summary-value">{$store_bank_info.bank_proportion}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 贷款银行信息 -->
+                <div class="bank-section">
+                    <div class="bank-header">
+                        <div class="bank-title">贷款银行</div>
+                        <div class="selected-count">已选择{$loan_bank_info.bank_list|count}家</div>
+                    </div>
+
+                    <foreach name="$loan_bank_info.bank_list" item="bank_info">
+                        <div class="bank-item">
+                            <div class="bank-name">{$bank_info.bank_name}</div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">贷款金额/万元:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.loan_amount}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">贷款余额/万元:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.loan_balance}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">担保方式:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.guarantee_type}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">到期时间:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.end_time}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">本行信用客户:</label>
+                                <div class="layui-input-block info-content">
+                                    {$bank_info.is_credit_name}
+                                </div>
+                            </div>
+                        </div>
+                    </foreach>
+                </div>
+            </div>
+
+            <!-- 客户归属标签页 -->
+            <div class="layui-tab-item">
+                <h2 class="section-title">客户归属</h2>
+
+                <div class="customer-tags">
+                    <div class="tag">
+                        <span class="tag-label">客户归属</span>
+                        <span class="tag-value">{$ascription_name|default='交叉客户'}</span>
+                    </div>
+                    <div class="tag">
+                        <span class="tag-label">客户级别</span>
+                        <span class="tag-value">{$level_name|default='五星级'}</span>
+                    </div>
+                    <div class="tag">
+                        <span class="tag-label">客户分类</span>
+                        <span class="tag-value">{$star_name|default='价值客户'}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

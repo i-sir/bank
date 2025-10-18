@@ -5,20 +5,20 @@ namespace app\admin\controller;
 
 /**
  * @adminMenuRoot(
- *     "name"                =>"CuTown",
- *     "name_underline"      =>"cu_town",
- *     "controller_name"     =>"CuTown",
- *     "table_name"          =>"cu_town",
+ *     "name"                =>"CuLevel",
+ *     "name_underline"      =>"cu_level",
+ *     "controller_name"     =>"CuLevel",
+ *     "table_name"          =>"cu_level",
  *     "action"              =>"default",
  *     "parent"              =>"",
  *     "display"             => true,
  *     "order"               => 10000,
  *     "icon"                =>"none",
- *     "remark"              =>"乡镇管理",
+ *     "remark"              =>"客户层级",
  *     "author"              =>"",
- *     "create_time"         =>"2025-10-17 16:53:06",
+ *     "create_time"         =>"2025-10-18 10:13:37",
  *     "version"             =>"1.0",
- *     "use"                 => new \app\admin\controller\CuTownController();
+ *     "use"                 => new \app\admin\controller\CuLevelController();
  * )
  */
 
@@ -27,11 +27,11 @@ use think\facade\Db;
 use cmf\controller\AdminBaseController;
 
 
-class CuTownController extends AdminBaseController
+class CuLevelController extends AdminBaseController
 {
 
     // public function initialize(){
-    //	//乡镇管理
+    //	//客户层级
     //	parent::initialize();
     //	}
 
@@ -57,14 +57,14 @@ class CuTownController extends AdminBaseController
     /**
      * 首页列表数据
      * @adminMenu(
-     *     'name'             => 'CuTown',
-     *     'name_underline'   => 'cu_town',
+     *     'name'             => 'CuLevel',
+     *     'name_underline'   => 'cu_level',
      *     'parent'           => 'index',
      *     'display'          => true,
      *     'hasView'          => true,
      *     'order'            => 10000,
      *     'icon'             => '',
-     *     'remark'           => '乡镇管理',
+     *     'remark'           => '客户层级',
      *     'param'            => ''
      * )
      */
@@ -73,9 +73,9 @@ class CuTownController extends AdminBaseController
         $this->base_index();//处理基础信息
 
 
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理    (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级    (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 查询条件 **/
         $where = [];
@@ -96,11 +96,11 @@ class CuTownController extends AdminBaseController
 
 
         /** 导出数据 **/
-        if ($params["is_export"]) $CuTownInit->export_excel($where, $params);
+        if ($params["is_export"]) $CuLevelInit->export_excel($where, $params);
 
 
         /** 查询数据 **/
-        $result = $CuTownInit->get_list_paginate($where, $params);
+        $result = $CuLevelInit->get_list_paginate($where, $params);
 
 
         /** 数据渲染 **/
@@ -125,18 +125,18 @@ class CuTownController extends AdminBaseController
     //添加提交
     public function add_post()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
 
         /** 检测参数信息 **/
-        $validateResult = $this->validate($params, 'CuTown');
+        $validateResult = $this->validate($params, 'CuLevel');
         if ($validateResult !== true) $this->error($validateResult);
 
 
         /** 插入数据 **/
-        $result = $CuTownInit->admin_edit_post($params);
+        $result = $CuLevelInit->admin_edit_post($params);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("保存成功", "index{$this->params_url}");
@@ -148,9 +148,9 @@ class CuTownController extends AdminBaseController
     {
         $this->base_edit();//处理基础信息
 
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理    (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级    (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 查询条件 **/
         $where   = [];
@@ -159,7 +159,7 @@ class CuTownController extends AdminBaseController
         /** 查询数据 **/
         $params["InterfaceType"] = "admin";//接口类型
         $params["DataFormat"]    = "find";//数据格式,find详情,list列表
-        $result                  = $CuTownInit->get_find($where, $params);
+        $result                  = $CuLevelInit->get_find($where, $params);
         if (empty($result)) $this->error("暂无数据");
 
         /** 数据格式转数组 **/
@@ -177,9 +177,9 @@ class CuTownController extends AdminBaseController
     {
         $this->base_edit();//处理基础信息
 
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理  (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级  (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 查询条件 **/
         $where   = [];
@@ -188,7 +188,7 @@ class CuTownController extends AdminBaseController
         /** 查询数据 **/
         $params["InterfaceType"] = "admin";//接口类型
         $params["DataFormat"]    = "find";//数据格式,find详情,list列表
-        $result                  = $CuTownInit->get_find($where, $params);
+        $result                  = $CuLevelInit->get_find($where, $params);
         if (empty($result)) $this->error("暂无数据");
 
         /** 数据格式转数组 **/
@@ -204,13 +204,13 @@ class CuTownController extends AdminBaseController
     //提交编辑
     public function edit_post()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
 
         /** 检测参数信息 **/
-        $validateResult = $this->validate($params, 'CuTown');
+        $validateResult = $this->validate($params, 'CuLevel');
         if ($validateResult !== true) $this->error($validateResult);
 
 
@@ -220,7 +220,7 @@ class CuTownController extends AdminBaseController
 
 
         /** 提交数据 **/
-        $result = $CuTownInit->admin_edit_post($params, $where);
+        $result = $CuLevelInit->admin_edit_post($params, $where);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("保存成功", "index{$this->params_url}");
@@ -230,16 +230,16 @@ class CuTownController extends AdminBaseController
     //提交(副本,无任何操作) 编辑&添加
     public function edit_post_two()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 更改数据条件 && 或$params中存在id本字段可以忽略 **/
         $where = [];
         if ($params['id']) $where[] = ['id', '=', $params['id']];
 
         /** 提交数据 **/
-        $result = $CuTownInit->edit_post_two($params, $where);
+        $result = $CuLevelInit->edit_post_two($params, $where);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("保存成功", "index{$this->params_url}");
@@ -249,9 +249,9 @@ class CuTownController extends AdminBaseController
     //驳回
     public function refuse()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理  (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级  (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 查询条件 **/
         $where   = [];
@@ -261,7 +261,7 @@ class CuTownController extends AdminBaseController
         /** 查询数据 **/
         $params["InterfaceType"] = "admin";//接口类型
         $params["DataFormat"]    = "find";//数据格式,find详情,list列表
-        $result                  = $CuTownInit->get_find($where, $params);
+        $result                  = $CuLevelInit->get_find($where, $params);
         if (empty($result)) $this->error("暂无数据");
 
         /** 数据格式转数组 **/
@@ -277,9 +277,9 @@ class CuTownController extends AdminBaseController
     //驳回,更改状态
     public function audit_post()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         /** 更改数据条件 && 或$params中存在id本字段可以忽略 **/
         $where = [];
@@ -289,7 +289,7 @@ class CuTownController extends AdminBaseController
         /** 查询数据 **/
         $params["InterfaceType"] = "admin";//接口类型
         $params["DataFormat"]    = "find";//数据格式,find详情,list列表
-        $item                    = $CuTownInit->get_find($where);
+        $item                    = $CuLevelInit->get_find($where);
         if (empty($item)) $this->error("暂无数据");
 
         /** 通过&拒绝时间 **/
@@ -297,7 +297,7 @@ class CuTownController extends AdminBaseController
         if ($params['status'] == 3) $params['refuse_time'] = time();
 
         /** 提交数据 **/
-        $result = $CuTownInit->edit_post_two($params, $where);
+        $result = $CuLevelInit->edit_post_two($params, $where);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("操作成功");
@@ -306,15 +306,15 @@ class CuTownController extends AdminBaseController
     //删除
     public function delete()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         if ($params["id"]) $id = $params["id"];
         if (empty($params["id"])) $id = $this->request->param("ids/a");
 
         /** 删除数据 **/
-        $result = $CuTownInit->delete_post($id);
+        $result = $CuLevelInit->delete_post($id);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("删除成功");//   , "index{$this->params_url}"
@@ -324,15 +324,15 @@ class CuTownController extends AdminBaseController
     //批量操作
     public function batch_post()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param();
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param();
 
         $id = $this->request->param("id/a");
         if (empty($id)) $id = $this->request->param("ids/a");
 
         //提交编辑
-        $result = $CuTownInit->batch_post($id, $params);
+        $result = $CuLevelInit->batch_post($id, $params);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("保存成功");//   , "index{$this->params_url}"
@@ -342,12 +342,12 @@ class CuTownController extends AdminBaseController
     //更新排序
     public function list_order_post()
     {
-        $CuTownInit  = new \init\CuTownInit();//乡镇管理   (ps:InitController)
-        $CuTownModel = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
-        $params      = $this->request->param("list_order/a");
+        $CuLevelInit  = new \init\CuLevelInit();//客户层级   (ps:InitController)
+        $CuLevelModel = new \initmodel\CuLevelModel(); //客户层级   (ps:InitModel)
+        $params       = $this->request->param("list_order/a");
 
         //提交更新
-        $result = $CuTownInit->list_order_post($params);
+        $result = $CuLevelInit->list_order_post($params);
         if (empty($result)) $this->error("失败请重试");
 
         $this->success("保存成功"); //   , "index{$this->params_url}"
