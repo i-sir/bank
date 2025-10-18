@@ -51,6 +51,7 @@
             <tr>
 
                 <th style="">ID</th>
+                <th style="">用户信息</th>
                 <th style="">客户类型</th>
                 <th style="">客户归属</th>
                 <th style="">客户分层</th>
@@ -69,6 +70,24 @@
                 <tr>
 
                     <td>{$vo.id|default=''}</td>  <!--ID-->
+                    <td>
+                        <if condition="!empty($vo.user_info)">
+                            <div style="display: flex;align-items: center;">
+                                <a href="javascript:imagePreviewDialog('{:cmf_get_image_preview_url($vo.user_info.avatar)}');">
+                                    <img class='img-rounded' src="{:cmf_get_image_preview_url($vo.user_info.avatar)}"
+                                         style="height:40px;">
+                                </a>
+                                <div style="margin-left: 6px;">
+                                    <p ondblclick="copyContent('{$vo.user_info.openid}')">{$vo.user_info.nickname}
+                                        ({$vo.user_info.id})</p>
+                                    <p>{$vo.user_info.phone}</p>
+                                </div>
+                            </div>
+                            <else/>
+                            已删除
+                        </if>
+                    </td>
+
                     <td>{$vo.type_name|default=''}</td>
                     <!--客户类型:1农户,2牧户,3个体工商户,4公职人员,5政府全资或控股企业正式职工,6社区居民,7民营小微企业,8合作经济组织,9政府全资或控股企业,10行政事业单位,11其他群体-->
                     <td>{$vo.ascription_name|default=''}</td>  <!--客户归属:1本行客户,2他行客户,3交叉客户,4空白客户-->

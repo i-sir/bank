@@ -85,6 +85,7 @@ class CustomerInit extends Base
     {
         $CuVillageModel = new \initmodel\CuVillageModel(); //村庄管理   (ps:InitModel)
         $CuTownModel    = new \initmodel\CuTownModel(); //乡镇管理   (ps:InitModel)
+        $MemberInit     = new \init\MemberInit();//会员管理
 
 
         //接口类型
@@ -92,6 +93,8 @@ class CustomerInit extends Base
         //数据格式
         if ($params['DataFormat']) $this->DataFormat = $params['DataFormat'];
 
+        $user_info         = $MemberInit->get_find(['id' => $item['user_id']]);
+        $item['user_info'] = $user_info;
 
         /** 数据格式(公共部分),find详情&&list列表 共存数据 **/
         $village_info         = $CuVillageModel->where('id', '=', $item['village_id'])->find();
@@ -364,6 +367,8 @@ class CustomerInit extends Base
         if ($params['loan_bank_info']) $params['loan_bank_info'] = json_encode($params['loan_bank_info'], JSON_UNESCAPED_UNICODE);
         if ($params['store_bank_info']) $params['store_bank_info'] = json_encode($params['store_bank_info'], JSON_UNESCAPED_UNICODE);
 
+        if ($params['loan_bank_ids']) $params['loan_bank_ids'] = $this->setParams($params['loan_bank_ids']);
+        if ($params['store_bank_ids']) $params['store_bank_ids'] = $this->setParams($params['store_bank_ids']);
 
         if (!empty($where)) {
             //传入where条件,根据条件更新数据
