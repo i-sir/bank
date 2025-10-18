@@ -141,7 +141,7 @@ class ShopLogController extends AuthController
         /** 查询条件 **/
         $where   = [];
         $where[] = ['id', '>', 0];
-
+        $where[] = ["user_id", "=", $this->user_id];
         if ($params["keyword"]) $where[] = ["shop_name", "like", "%{$params['keyword']}%"];
         if ($params["status"]) $where[] = ["status", "=", $params["status"]];
         if ($params['type']) $where[] = ['type', '=', $params['type']];
@@ -320,8 +320,6 @@ class ShopLogController extends AuthController
         if (!empty($params["id"])) $msg = "编辑成功";
         $this->success($msg);
     }
-
- 
 
 
 }

@@ -765,7 +765,7 @@ class CustomerController extends AuthController
                 'before_total' => $beforeCount, // 对比时间段数量
                 'change_count' => abs($changeCount), // 变化量绝对值
                 'change_trend' => $trend, // 趋势（1增长/-1减少/0持平）
-                'change_text'  => $trend > 0 ? "+{$changeCount}" : ($trend < 0 ? (string)$changeCount : '0') // 显示文本（带符号）
+                'change_text'  => $trend > 0 ? "+{$changeCount}" : ($trend < 0 ? (string)$changeCount : '+0') // 显示文本（带符号）
             ];
         }
 
@@ -950,16 +950,61 @@ class CustomerController extends AuthController
             ];
         }
 
+
+        /** 客户归属占比比例 **/
+        $attributionList    = $parseConfig('customer_attribution', '/'); // 解析归属类型配置
+        $attributionResult2 = []; // 归属类型统计结果集
+        $totalNumber = $CustomerModel->where($currentMap)->count(); // 总用户
+
+        foreach ($attributionList as $key => $name) {
+            // 归属类型过滤条件（严格遵循格式：先空数组再追加）
+            $filterMap   = []; // 初始化过滤条件
+            $filterMap[] = ['ascription', '=', $key]; // 追加条件：归属类型=当前循环的类型ID
+
+            // 统计当前时间段该归属类型的客户数量（合并基础条件+时间条件+归属类型条件）
+            $currentCount = $CustomerModel->where(array_merge($currentMap, $filterMap))->count();
+            // 统计对比时间段该归属类型的客户数量
+            $beforeCount = $CustomerModel->where(array_merge($beforeMap, $filterMap))->count();
+
+            // 计算变化量和趋势
+            $changeCount = $currentCount - $beforeCount; // 变化量（当前-对比）
+            $trend       = 0; // 趋势标识（默认持平）
+            if ($changeCount > 0) {
+                $trend = 1; // 增长
+            } elseif ($changeCount < 0) {
+                $trend = -1; // 减少
+            }
+
+            // 计算百分比（避免除零错误）
+            $percentage = $totalNumber > 0 ? round(($currentCount / $totalNumber) * 100, 2) : 0;
+
+            // 组装当前归属类型的统计结果
+            $attributionResult2[] = [
+                'type'         => $key, // 归属类型ID
+                'name'         => $name, // 归属类型名称
+                'total'        => $currentCount, // 当前时间段数量
+                'before_total' => $beforeCount, // 对比时间段数量
+                'change_count' => abs($changeCount), // 变化量绝对值
+                'change_trend' => $trend, // 趋势（1增长/-1减少/0持平）
+                'change_text'  => $trend > 0 ? "+{$changeCount}" : ($trend < 0 ? (string)$changeCount : '+0'), // 显示文本（带符号）
+                'percentage'   => $percentage // 当前数量占总用户数的百分比
+            ];
+        }
+
+
+
+
         // 组装所有统计结果并返回
         $this->success('获取成功', [
-            'customer_result'    => $customerResult, // 客户类型统计
-            'attribution_result' => $attributionResult, // 客户归属占比
-            'loan_result'        => $loanResult, // 贷款人数统计
-            'store_result'       => $storeResult, // 存款人数统计
-            'ratio_result'       => $ratioResult, // 贷款/存款占比
-            'credit_result'      => $creditResult, // 信用用户统计
-            'town_result'        => $townResult, // 地区统计
-            'star_result'        => $starResult // 客户等级统计
+            'customer_result'     => $customerResult, // 客户类型统计
+            'attribution_result'  => $attributionResult, // 客户归属占比
+            'attribution_result2' => $attributionResult2,// 归属类型统计
+            'loan_result'         => $loanResult, // 贷款人数统计
+            'store_result'        => $storeResult, // 存款人数统计
+            'ratio_result'        => $ratioResult, // 贷款/存款占比
+            'credit_result'       => $creditResult, // 信用用户统计
+            'town_result'         => $townResult, // 地区统计
+            'star_result'         => $starResult // 客户等级统计
         ]);
     }
 
