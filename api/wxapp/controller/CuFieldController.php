@@ -202,6 +202,7 @@ class CuFieldController extends AuthController
                     'bank_id'        => $bank_id,
                     'bank_name'      => $bank_info['name'],
                     'loan_amount'    => '',//贷款金额
+                    'loan_balance'   => '',//贷款余额
                     'guarantee_type' => '',//担保方式
                     'end_time'       => '',//到期时间
                     'is_credit'      => '',//本行信用客户:1是,2否
