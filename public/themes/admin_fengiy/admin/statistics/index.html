@@ -33,10 +33,7 @@
         <button type="button" class="layui-btn layui-bg-red" id="resetBtn" style="margin-left: 10px">重置</button>
     </form>
 
-
-
-
-    <!-- 客户统计卡片 -->
+    <!-- 客户统计卡片 - 仅当type不存在时显示 -->
     <div class="layui-row layui-col-space20 margin-top-20" id="customerStats">
         <h3 class="layui-bg-gray layui-padding">客户统计(人)</h3>
         <div class="layui-row layui-col-space15" id="customerResult">
@@ -44,23 +41,23 @@
         </div>
     </div>
 
-    <!-- 占比统计图表 -->
-    <div class="layui-card margin-top-20">
+    <!-- 占比统计图表 - 仅当type不存在时显示 -->
+    <div class="layui-card margin-top-20" id="proportionChartContainer">
         <div class="layui-card-header">占比统计</div>
         <div class="layui-card-body">
             <div id="proportionChart" style="height: 400px;"></div>
         </div>
     </div>
 
-    <!-- 占比统计列表 -->
+    <!-- 占比统计列表 - 仅当type存在时显示 -->
     <div class="layui-row layui-col-space20 margin-top-20" id="proportionList">
-        <h3 class="layui-bg-gray layui-padding">占比统计详情</h3>
+        <h3 class="layui-bg-gray layui-padding" id="proportionListTitle">占比统计详情</h3>
         <div class="layui-row layui-col-space15" id="attributionResult">
             <!-- 占比统计数据将通过JS动态加载 -->
         </div>
     </div>
 
-    <!-- 贷款与存款统计 -->
+    <!-- 贷款与存款统计 - 始终显示 -->
     <div class="layui-card margin-top-20">
         <div class="layui-card-header">贷款与存款人数统计</div>
         <div class="layui-card-body">
@@ -120,7 +117,7 @@
         </div>
     </div>
 
-    <!-- 占比统计 -->
+    <!-- 占比统计 - 始终显示 -->
     <div class="layui-card margin-top-20">
         <div class="layui-card-header">占比统计</div>
         <div class="layui-card-body">
@@ -147,7 +144,7 @@
         </div>
     </div>
 
-    <!-- 信用用户统计 -->
+    <!-- 信用用户统计 - 始终显示 -->
     <div class="layui-card margin-top-20">
         <div class="layui-card-header">信用用户统计</div>
         <div class="layui-card-body">
@@ -180,7 +177,7 @@
         </div>
     </div>
 
-    <!-- 按地区统计 -->
+    <!-- 按地区统计 - 始终显示 -->
     <div class="layui-card margin-top-20">
         <div class="layui-card-header">按地区统计</div>
         <div class="layui-card-body">
@@ -199,7 +196,7 @@
         </div>
     </div>
 
-    <!-- 客户等级统计 -->
+    <!-- 客户等级统计 - 始终显示 -->
     <div class="layui-card margin-top-20">
         <div class="layui-card-header">客户等级统计</div>
         <div class="layui-card-body">
@@ -229,16 +226,49 @@
         var laydate = layui.laydate;
         var $ = layui.jquery;
 
+        // 客户类型配置（与Vue端保持一致）
+        var customerType = [
+            { value: '1', label: '个人客户' },
+            { value: '2', label: '企业客户' },
+            // 可根据实际情况补充其他类型
+        ];
+
+        // 获取URL中的type参数
+        var urlParams = new URLSearchParams(window.location.search);
+        var type = urlParams.get('type');
+
         // 初始化图表
         var proportionChart = echarts.init(document.getElementById('proportionChart'));
 
+        // 根据type显示不同内容
+        function toggleContentByType() {
+            if (type) {
+                // 存在type时：隐藏客户统计和占比图表，显示占比列表
+                $('#customerStats').hide();
+                $('#proportionChartContainer').hide();
+                $('#proportionList').show();
+
+                // 设置页面标题
+                var typeItem = customerType.find(item => item.value === type);
+                if (typeItem) {
+                    document.title = typeItem.label + '数据统计';
+                    $('#proportionListTitle').text(typeItem.label + '占比统计详情');
+                }
+            } else {
+                // 不存在type时：显示客户统计和占比图表，隐藏占比列表
+                $('#customerStats').show();
+                $('#proportionChartContainer').show();
+                $('#proportionList').hide();
+            }
+        }
+
         // 初始数据加载
+        toggleContentByType();
         loadTownList();
 
 
         // 加载乡镇列表
         function loadTownList() {
-            // 模拟AJAX请求
             $.getJSON("{:url('find_town_list')}", function(res) {
                 var townSelect = $('#townSelect');
                 townSelect.empty();
@@ -259,32 +289,30 @@
                 town_id: $('#townSelect').val()
             };
 
-            // 模拟AJAX请求
+            // 如果type存在，添加到请求参数中
+            if (type) {
+                params.type = type;
+            }
+
             $.getJSON("{:url('find_statistics')}" , params, function(res) {
                 var data = res.data;
 
-                // 渲染客户统计数据
-                renderCustomerResult(data.customer_result);
+                // 只有当type不存在时才渲染客户统计数据
+                if (!type) {
+                    renderCustomerResult(data.customer_result);
+                    renderProportionChart(data.attribution_result);
+                }
 
-                // 渲染占比统计图表
-                renderProportionChart(data.attribution_result);
+                // 只有当type存在时才渲染占比统计列表
+                if (type) {
+                    renderAttributionResult(data.attribution_result2);
+                }
 
-                // 渲染占比统计列表
-                renderAttributionResult(data.attribution_result2);
-
-                // 渲染贷款存款数据
+                // 渲染其他共用数据
                 renderLoanStoreData(data.loan_result, data.store_result);
-
-                // 渲染占比数据
                 renderRatioData(data.ratio_result);
-
-                // 渲染信用用户数据
                 renderCreditData(data.credit_result);
-
-                // 渲染地区统计数据
                 renderTownResult(data.town_result);
-
-                // 渲染客户等级数据
                 renderStarResult(data.star_result);
             });
         }
