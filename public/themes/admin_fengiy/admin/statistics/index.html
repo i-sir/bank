@@ -1,0 +1,457 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <!-- 时间选择器 -->
+    <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
+        <div class="layui-form-item">
+            <label class="layui-form-label">时间维度</label>
+            <div class="layui-input-block">
+                <select name="dateType" class="layui-select post-params" id="dateType">
+                    <option value="1" selected>日</option>
+                    <option value="2">周</option>
+                    <option value="3">月</option>
+                    <option value="4">年</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">乡镇选择</label>
+            <div class="layui-input-block">
+                <select name="town_id" class="layui-select post-params" id="townSelect">
+                    <!-- 乡镇数据将通过JS动态加载 -->
+                </select>
+            </div>
+        </div>
+
+        <button type="button" class="layui-btn" id="searchBtn">查询</button>
+        <button type="button" class="layui-btn layui-bg-red" id="resetBtn">重置</button>
+    </form>
+
+    <!-- 客户统计卡片 -->
+    <div class="layui-row layui-col-space20 margin-top-20" id="customerStats">
+        <h3 class="layui-bg-gray layui-padding">客户统计(人)</h3>
+        <div class="layui-row layui-col-space15" id="customerResult">
+            <!-- 客户统计数据将通过JS动态加载 -->
+        </div>
+    </div>
+
+    <!-- 占比统计图表 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">占比统计</div>
+        <div class="layui-card-body">
+            <div id="proportionChart" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <!-- 占比统计列表 -->
+    <div class="layui-row layui-col-space20 margin-top-20" id="proportionList">
+        <h3 class="layui-bg-gray layui-padding">占比统计详情</h3>
+        <div class="layui-row layui-col-space15" id="attributionResult">
+            <!-- 占比统计数据将通过JS动态加载 -->
+        </div>
+    </div>
+
+    <!-- 贷款与存款统计 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">贷款与存款人数统计</div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>农商银行贷款人数</h4>
+                            <p class="layui-text layui-text-danger" id="thisBankLoan">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>其他银行贷款人数</h4>
+                            <p class="layui-text layui-text-danger" id="otherBankLoan">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>总贷款人数</h4>
+                            <p class="layui-text layui-text-danger" id="totalBankLoan">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-row layui-col-space15 margin-top-20">
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>农商银行存款人数</h4>
+                            <p class="layui-text layui-text-green" id="thisBankStore">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>其他银行存款人数</h4>
+                            <p class="layui-text layui-text-green" id="otherBankStore">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>总存款人数</h4>
+                            <p class="layui-text layui-text-green" id="totalBankStore">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 占比统计 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">占比统计</div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>贷款人数占比</h4>
+                            <p class="layui-text layui-text-orange" id="loanRatio">0%</p>
+                            <p class="layui-text" id="loanNumber">0人</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>存款人数占比</h4>
+                            <p class="layui-text layui-text-green" id="storeRatio">0%</p>
+                            <p class="layui-text" id="storeNumber">0人</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信用用户统计 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">信用用户统计</div>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>贷款人数</h4>
+                            <p class="layui-text layui-text-danger" id="loanCreditNumber">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>信用用户数量</h4>
+                            <p class="layui-text layui-text-blue" id="creditNumber">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-card layui-bg-gray">
+                        <div class="layui-card-body">
+                            <h4>信用用户占比</h4>
+                            <p class="layui-text layui-text-purple" id="creditRatio">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 按地区统计 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">按地区统计</div>
+        <div class="layui-card-body">
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <th>地区名称</th>
+                    <th>人数</th>
+                    <th>占比</th>
+                </tr>
+                </thead>
+                <tbody id="townResult">
+                <!-- 地区统计数据将通过JS动态加载 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 客户等级统计 -->
+    <div class="layui-card margin-top-20">
+        <div class="layui-card-header">客户等级统计</div>
+        <div class="layui-card-body">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>等级</th>
+                    <th>人数</th>
+                    <th>占比</th>
+                </tr>
+                </thead>
+                <tbody id="starResult">
+                <!-- 客户等级数据将通过JS动态加载 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__TMPL__/public/assets/simpleboot3/js/adminindex.js"></script>
+<script src="__TMPL__/public/assets/js/echarts.js"></script>
+<script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.1/files/dist/echarts.min.js"></script>
+<script>
+    layui.use(['form', 'laydate'], function() {
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        // 初始化图表
+        var proportionChart = echarts.init(document.getElementById('proportionChart'));
+
+        // 初始数据加载
+        loadTownList();
+        loadStatistics();
+
+        // 加载乡镇列表
+        function loadTownList() {
+            // 模拟AJAX请求
+            $.getJSON("{:url('find_town_list')}", function(res) {
+                var townSelect = $('#townSelect');
+                townSelect.empty();
+
+                res.data.forEach(function(item) {
+                    townSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
+                });
+
+                form.render('select');
+            });
+        }
+
+        // 加载统计数据
+        function loadStatistics() {
+            var params = {
+                date: $('#dateType').val(),
+                town_id: $('#townSelect').val()
+            };
+
+            // 模拟AJAX请求
+            $.getJSON("{:url('find_statistics')}" , params, function(res) {
+                var data = res.data;
+
+                // 渲染客户统计数据
+                renderCustomerResult(data.customer_result);
+
+                // 渲染占比统计图表
+                renderProportionChart(data.attribution_result);
+
+                // 渲染占比统计列表
+                renderAttributionResult(data.attribution_result2);
+
+                // 渲染贷款存款数据
+                renderLoanStoreData(data.loan_result, data.store_result);
+
+                // 渲染占比数据
+                renderRatioData(data.ratio_result);
+
+                // 渲染信用用户数据
+                renderCreditData(data.credit_result);
+
+                // 渲染地区统计数据
+                renderTownResult(data.town_result);
+
+                // 渲染客户等级数据
+                renderStarResult(data.star_result);
+            });
+        }
+
+        // 渲染客户统计数据
+        function renderCustomerResult(data) {
+            var container = $('#customerResult');
+            container.empty();
+
+            data.forEach(function(item) {
+                var dateText = getDateText($('#dateType').val());
+                var html = `
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <p class="layui-text">${item.name}</p>
+                            <p class="layui-text layui-text-danger layui-font-18">${item.total}</p>
+                            <p class="layui-text layui-font-12">${dateText}：${item.before_total} ${item.change_text}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                container.append(html);
+            });
+        }
+
+        // 渲染占比统计图表
+        function renderProportionChart(data) {
+            var option = {
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 10
+                },
+                series: [
+                    {
+                        name: '占比统计',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 18,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: data.series[0].data
+                    }
+                ]
+            };
+
+            proportionChart.setOption(option);
+        }
+
+        // 渲染占比统计列表
+        function renderAttributionResult(data) {
+            var container = $('#attributionResult');
+            container.empty();
+
+            data.forEach(function(item) {
+                var dateText = getDateText($('#dateType').val());
+                var html = `
+                <div class="layui-col-md3">
+                    <div class="layui-card">
+                        <div class="layui-card-body">
+                            <p class="layui-text">${item.name}</p>
+                            <p class="layui-text layui-text-danger layui-font-18">${item.total} <span class="layui-text-blue">${item.percentage}%</span></p>
+                            <p class="layui-text layui-font-12">${dateText}：${item.before_total} ${item.change_text}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                container.append(html);
+            });
+        }
+
+        // 渲染贷款存款数据
+        function renderLoanStoreData(loanData, storeData) {
+            $('#thisBankLoan').text(loanData.this_bank_number);
+            $('#otherBankLoan').text(loanData.other_bank_number);
+            $('#totalBankLoan').text(loanData.total_bank_number);
+
+            $('#thisBankStore').text(storeData.this_bank_number);
+            $('#otherBankStore').text(storeData.other_bank_number);
+            $('#totalBankStore').text(storeData.total_bank_number);
+        }
+
+        // 渲染占比数据
+        function renderRatioData(data) {
+            $('#loanRatio').text(data.loan_ratio + '%');
+            $('#loanNumber').text(data.loan_number + '人');
+            $('#storeRatio').text(data.store_ratio + '%');
+            $('#storeNumber').text(data.store_number + '人');
+        }
+
+        // 渲染信用用户数据
+        function renderCreditData(data) {
+            $('#loanCreditNumber').text(data.loan_credit_number);
+            $('#creditNumber').text(data.credit_number);
+            $('#creditRatio').text(data.credit_ratio + '%');
+        }
+
+        // 渲染地区统计数据
+        function renderTownResult(data) {
+            var container = $('#townResult');
+            container.empty();
+
+            data.forEach(function(item) {
+                var tr = `<tr>
+                <td>${item.name}</td>
+                <td>${item.number}</td>
+                <td>${item.percentage}%</td>
+            </tr>`;
+                container.append(tr);
+            });
+        }
+
+        // 渲染客户等级数据
+        function renderStarResult(data) {
+            var container = $('#starResult');
+            container.empty();
+
+            data.forEach(function(item) {
+                var tr = `<tr>
+                <td>${item.name}</td>
+                <td>${item.number}</td>
+                <td>${item.percentage}</td>
+            </tr>`;
+                container.append(tr);
+            });
+        }
+
+        // 获取日期文本
+        function getDateText(type) {
+            switch(type) {
+                case '1': return '昨日';
+                case '2': return '上周';
+                case '3': return '上月';
+                case '4': return '上年';
+                default: return '';
+            }
+        }
+
+        // 搜索按钮点击事件
+        $('#searchBtn').click(function() {
+            loadStatistics();
+        });
+
+        // 重置按钮点击事件
+        $('#resetBtn').click(function() {
+            $('#dateType').val('1');
+            form.render('select');
+            loadStatistics();
+        });
+
+        // 窗口大小变化时重绘图表
+        window.addEventListener('resize', function() {
+            proportionChart.resize();
+        });
+    });
+</script>
+</body>
+</html>
