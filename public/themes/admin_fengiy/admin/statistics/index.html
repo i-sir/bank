@@ -4,30 +4,37 @@
 <div class="wrap js-check-wrap">
     <!-- 时间选择器 -->
     <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
-        <div class="layui-form-item">
-            <label class="layui-form-label">时间维度</label>
-            <div class="layui-input-block">
-                <select name="dateType" class="layui-select post-params" id="dateType">
-                    <option value="1" selected>日</option>
-                    <option value="2">周</option>
-                    <option value="3">月</option>
-                    <option value="4">年</option>
-                </select>
+        时间：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="layui-inline">
+                    <select name="dateType" class="layui-select post-params" id="dateType" style="width: 100px;">
+                        <option value="1" selected>日</option>
+                        <option value="2">周</option>
+                        <option value="3">月</option>
+                        <option value="4">年</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">乡镇选择</label>
-            <div class="layui-input-block">
-                <select name="town_id" class="layui-select post-params" id="townSelect">
-                    <!-- 乡镇数据将通过JS动态加载 -->
-                </select>
+        乡镇选择：
+        <div class="form-group layui-form">
+            <div class="layui-form-item" style="margin-bottom: 0 !important;">
+                <div class="layui-inline">
+                    <select name="town_id" class="layui-select post-params" id="townSelect" style="width: 180px;">
+                        <!-- 乡镇数据将通过JS动态加载 -->
+                    </select>
+                </div>
             </div>
         </div>
 
-        <button type="button" class="layui-btn" id="searchBtn">查询</button>
-        <button type="button" class="layui-btn layui-bg-red" id="resetBtn">重置</button>
+        <button type="button" class="layui-btn" id="searchBtn" style="margin-left: 10px">查询</button>
+        <button type="button" class="layui-btn layui-bg-red" id="resetBtn" style="margin-left: 10px">重置</button>
     </form>
+
+
+
 
     <!-- 客户统计卡片 -->
     <div class="layui-row layui-col-space20 margin-top-20" id="customerStats">
@@ -227,7 +234,7 @@
 
         // 初始数据加载
         loadTownList();
-        loadStatistics();
+
 
         // 加载乡镇列表
         function loadTownList() {
@@ -241,6 +248,7 @@
                 });
 
                 form.render('select');
+                loadStatistics();
             });
         }
 
