@@ -1,3 +1,25 @@
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">关联支行:</label>
+    <div class="layui-input-block col-sm-6" style="">
+        <if condition="!empty($subbranch_id)">
+            <select class="form-control post-params" lay-search lay-filter="subbranch_id" name="subbranch_id">
+                <foreach item="vo" key="key" name="subbranch_list">
+                    <option value="{$vo.id}"
+                    <if condition="$subbranch_id eq $vo.id ">selected</if>
+                    >{$vo.name}</option>
+                </foreach>
+            </select>
+            <else/>
+            <select class="form-control post-params" lay-search lay-filter="subbranch_id" name="subbranch_id">
+                <foreach item="vo" key="key" name="subbranch_list">
+                    <option value="{$vo.id}">{$vo.name}</option>
+                </foreach>
+            </select>
+        </if>
+    </div>
+</div>
+
 <div class="form-group" style="display: none;">
     <label class="col-sm-2 control-label">用户类型;1:</label>
     <div class="layui-input-block col-sm-6">
@@ -137,6 +159,8 @@
         <input type="text" name="mobile" class="form-control post-params item-left" value="{$mobile|default=''}">
     </div>
 </div>
+
+
 
 
 

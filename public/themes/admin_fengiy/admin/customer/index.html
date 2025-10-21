@@ -4,10 +4,6 @@
     <ul class="nav nav-tabs">
         <li class="active"><a href="{:url('index',['pid'=>$pid,'params'=>$params])}">客户信息记录</a></li>
 
-        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'admin/customer/add')">
-            <li><a href="{:url('add',['pid'=>$pid,'params'=>$params])}">添加</a></li>
-        </if>
-
     </ul>
 
     <form class="well form-inline margin-top-20 layui-form ajax-form w-form-search" method="get" autocomplete="off">
@@ -59,6 +55,7 @@
                 <th style="">乡镇</th>
                 <th style="">村庄</th>
                 <th style="">名称</th>
+                <th style="">联系方式</th>
                 <th style="">本行信用客户</th>
                 <th style="">创建时间</th>
 
@@ -96,6 +93,7 @@
                     <td>{$vo.town_name|default=''}</td>  <!--乡镇id-->
                     <td>{$vo.village_name|default=''}</td>  <!--村庄id-->
                     <td>{$vo.username|default=''}</td>  <!--姓名-->
+                    <td>{$vo.phone|default=''}</td>  <!--姓名-->
                     <td>
                         {$vo.is_credit_name}
                     </td>

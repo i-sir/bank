@@ -84,7 +84,7 @@ class CustomerController extends AdminBaseController
         //$where[]=["type","=", 1];
         if ($params["keyword"]) $where[] = ["username", "like", "%{$params["keyword"]}%"];
         if ($params["test"]) $where[] = ["test", "=", $params["test"]];
-
+        if ($this->admin_info['subbranch_id']) $where[] = ["subbranch_id", "=", $this->admin_info['subbranch_id']];
 
         //$where[] = $this->getBetweenTime($params['begin_time'], $params['end_time']);
         //if($params["status"]) $where[]=["status","=", $params["status"]];

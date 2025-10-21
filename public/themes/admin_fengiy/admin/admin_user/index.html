@@ -44,6 +44,7 @@
             <thead>
             <tr>
                 <th style="width: 60px">ID</th>
+                <th style="width: 60px">关联支行</th>
                 <th style="width: 60px">用户名</th>
                 <th style="width: 60px">角色</th>
                 <th style="width: 60px">手机号</th>
@@ -58,6 +59,7 @@
             <foreach name="list" item="vo">
                 <tr>
                     <td>{$vo.id}</td>
+                    <td>{$vo.subbranch_name}</td>
                     <td>{$vo.user_login}</td>
                     <td>{$vo.role_name}</td>
                     <td>{$vo.mobile}</td>

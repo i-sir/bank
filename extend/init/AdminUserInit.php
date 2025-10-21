@@ -50,6 +50,8 @@ class AdminUserInit extends Base
      */
     public function common_item($item = [], $params = [])
     {
+        $CuSubbranchModel = new \initmodel\CuSubbranchModel(); //支行管理  (ps:InitModel)
+
         //处理转文字
         $item['user_type_name']   = $this->user_type[$item['user_type']];//用户类型;1
         $item['sex_name']         = $this->sex[$item['sex']];//性别;0
@@ -61,6 +63,14 @@ class AdminUserInit extends Base
         $role_info         = Db::name('role')->where('id', $role_id)->find();
         $item['role_id']   = $role_info['id'];
         $item['role_name'] = $role_info['name'];
+
+
+
+        //关联支行
+        $item['subbranch_name'] = $CuSubbranchModel->where('id', '=', $item['subbranch_id'])->value('name');
+
+
+
 
         //接口类型
         if ($params['InterfaceType']) $this->InterfaceType = $params['InterfaceType'];

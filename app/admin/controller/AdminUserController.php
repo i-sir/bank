@@ -51,6 +51,10 @@ class AdminUserController extends AdminBaseController
     {
         $role_list         = Db::name('role')->where('id','<>',1)->select();
         $this->assign("role_list", $role_list);
+
+
+        $CuSubbranchInit  = new \init\CuSubbranchInit();//支行管理    (ps:InitController)
+        $this->assign("subbranch_list", $CuSubbranchInit->get_list());
     }
 
     /**

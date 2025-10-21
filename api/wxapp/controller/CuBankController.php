@@ -133,8 +133,8 @@ class CuBankController extends AuthController
         $where[] = ['is_show', '=', 1];
         if ($params["keyword"]) $where[] = ["name", "like", "%{$params['keyword']}%"];
         if ($params["status"]) $where[] = ["status", "=", $params["status"]];
-        if ($params["is_deposit"]) $where[] = ["is_deposit", "=", $params["is_deposit"]];
-        if ($params["is_loan"]) $where[] = ["is_loan", "=", $params["is_loan"]];
+        if ($params["is_deposit"]) $where[] = ["is_deposit", "=", 1];
+        if ($params["is_loan"]) $where[] = ["is_loan", "=", 1];
 
 
         /** 查询数据 **/
